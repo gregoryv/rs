@@ -50,6 +50,14 @@ func TestLs_Json_long(t *testing.T) {
 	golden.Assert(t, buf.String())
 }
 
+func TestLs_Json_named(t *testing.T) {
+	sys := NewSystem()
+	asRoot := Root.Use(sys)
+	var buf bytes.Buffer
+	asRoot.Fexec(&buf, "/bin/ls", "-json", "-json-name", "resources", "/")
+	golden.Assert(t, buf.String())
+}
+
 func ExampleLs_Json() {
 	Anonymous.Use(NewSystem()).Fexec(os.Stdout, "/bin/ls", "-json", "/")
 	// output:
@@ -80,5 +88,7 @@ func ExampleLs_help() {
 	//   -R	recursive
 	//   -json
 	//     	write json
+	//   -json-name string
+	//     	result name of resources, if empty written as array
 	//   -l	use a long listing format
 }

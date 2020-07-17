@@ -12,10 +12,12 @@ import (
 // Ls lists resources
 func Ls(cmd *Cmd) ExecErr {
 	flags := flag.NewFlagSet("ls", flag.ContinueOnError)
+	flags.SetOutput(cmd.Out)
 	longList := flags.Bool("l", false, "use a long listing format")
 	jsonFmt := flags.Bool("json", false, "write json")
+	name := flags.String("json-name", "",
+		"result name of resources, if empty written as array")
 	recursive := flags.Bool("R", false, "recursive")
-	flags.SetOutput(cmd.Out)
 	if err := flags.Parse(cmd.Args); err != nil {
 		return err
 	}
@@ -30,6 +32,7 @@ func Ls(cmd *Cmd) ExecErr {
 		jf := &jsonFormat{
 			recursive: *recursive,
 			long:      *longList,
+			name:      *name,
 			out:       cmd.Out,
 		}
 		jf.Open()
@@ -58,14 +61,26 @@ type formatter interface {
 type jsonFormat struct {
 	recursive bool
 	long      bool
+	name      string
 	out       io.Writer
 	separator string
 	*json.Encoder
 }
 
 // Open
-func (me *jsonFormat) Open()  { fmt.Fprint(me.out, "[") }
-func (me *jsonFormat) Close() { fmt.Fprint(me.out, "]") }
+func (me *jsonFormat) Open() {
+	if me.name != "" {
+		fmt.Fprintf(me.out, `{%q:`, me.name)
+	}
+	fmt.Fprint(me.out, "[")
+}
+
+func (me *jsonFormat) Close() {
+	fmt.Fprint(me.out, "]")
+	if me.name != "" {
+		fmt.Fprint(me.out, "}")
+	}
+}
 
 func (me *jsonFormat) Visit(c *ResInfo, abspath string, w *nugo.Walker) {
 	fmt.Fprint(me.out, me.separator)
