@@ -1,0 +1,1 @@
+[{"name": "bin", "mode": "d--xrwxr-xr-x", "uid": "1", "gid": "1"},{"name": "etc", "mode": "d---rwxr-xr-x", "uid": "1", "gid": "1"},{"name": "tmp", "mode": "drwxrwxrwxrwx", "uid": "1", "gid": "1"}]

@@ -8,6 +8,7 @@ github.com/gregoryv/fox v0.2.0/go.mod h1:TIjp1KNSs4u5psYeHElpkZTAuj2SKuELviyJokI
 github.com/gregoryv/fox v0.3.1 h1:55Xk+pcVvOVCyvWDg5CNYZ1iNNVwXjeOjhB+8UEPFUA=
 github.com/gregoryv/fox v0.3.1/go.mod h1:YHFvaSSaw6+XapVnfD27LIPcOMixy5PhLHC1h3SB24w=
 github.com/gregoryv/gocyclo v0.0.0-20180305144948-0be7902fabdc/go.mod h1:x/QA8cT1gfn/XriQ/CVNX7I8IM4Z2YJAAEWFym2clZI=
+github.com/gregoryv/golden v0.3.1 h1:OdVsKRhiTWQj/euKcBU09KHK1iYfLljijh+lE01GETc=
 github.com/gregoryv/golden v0.3.1/go.mod h1:gwYSBOmvGF+fefo7P1PyBpAqqvYx6S85dmkUaI6QMU4=
 github.com/gregoryv/nugo v0.2.0 h1:hx/YjN4yuwb5IDnJRiWmxW2xPQZiMKIsgFOQ9TO2poA=
 github.com/gregoryv/nugo v0.2.0/go.mod h1:va1vYkJFTGovPSmSVrJmoKQke7ipS2iXAbA8Fnt/jOU=

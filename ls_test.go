@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/gregoryv/asserter"
+	"github.com/gregoryv/golden"
 )
 
 func TestLs(t *testing.T) {
@@ -41,6 +42,20 @@ func TestLs(t *testing.T) {
 	}
 }
 
+func TestLs_Json_long(t *testing.T) {
+	sys := NewSystem()
+	asRoot := Root.Use(sys)
+	var buf bytes.Buffer
+	asRoot.Fexec(&buf, "/bin/ls", "-l", "-json", "/")
+	golden.Assert(t, buf.String())
+}
+
+func ExampleLs_Json() {
+	Anonymous.Use(NewSystem()).Fexec(os.Stdout, "/bin/ls", "-json", "/")
+	// output:
+	// [{"name": "bin"},{"name": "etc"},{"name": "tmp"}]
+}
+
 func ExampleLs() {
 	Anonymous.Use(NewSystem()).Fexec(os.Stdout, "/bin/ls", "/")
 	// output:
@@ -63,5 +78,7 @@ func ExampleLs_help() {
 	// output:
 	// Usage of ls:
 	//   -R	recursive
+	//   -json
+	//     	write json
 	//   -l	use a long listing format
 }
