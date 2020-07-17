@@ -13,5 +13,7 @@ github.com/gregoryv/nugo v0.2.0 h1:hx/YjN4yuwb5IDnJRiWmxW2xPQZiMKIsgFOQ9TO2poA=
 github.com/gregoryv/nugo v0.2.0/go.mod h1:va1vYkJFTGovPSmSVrJmoKQke7ipS2iXAbA8Fnt/jOU=
 github.com/gregoryv/nugo v0.2.1-0.20200717062129-fe1e491efc3b h1:WEUGidNhdYG/mwnco6Lgt8jmik33wXExpExg75Ik0oY=
 github.com/gregoryv/nugo v0.2.1-0.20200717062129-fe1e491efc3b/go.mod h1:va1vYkJFTGovPSmSVrJmoKQke7ipS2iXAbA8Fnt/jOU=
+github.com/gregoryv/nugo v0.3.0 h1:duA4CHGLHaJXOU0d+iDlz2eKbUQeN1Z+x9K9SPMlCR8=
+github.com/gregoryv/nugo v0.3.0/go.mod h1:va1vYkJFTGovPSmSVrJmoKQke7ipS2iXAbA8Fnt/jOU=
 github.com/gregoryv/qual v0.2.1/go.mod h1:5M5kejbZgxtswBGeoXC1yh4CP94W3FFv5o60BflBlnY=
 github.com/gregoryv/qual v0.4.0/go.mod h1:dB0ZUMaE5qieQ975kKI7A4CDfg6wgcsPcSlY1SWuq9Y=
