@@ -1,0 +1,17 @@
+github.com/gregoryv/asserter v0.1.0/go.mod h1:iLD46IKZjjleTkmDikemRaDZQldDrq8uwTnygV/hC/M=
+github.com/gregoryv/asserter v0.2.3-0.20200604204219-cc98dbaa395f/go.mod h1:WjMhNLh0zjyvgOQpWWx8Om0n7jlgMzTn7qgKhJeH8ew=
+github.com/gregoryv/asserter v0.3.1-0.20200620185907-332cdf62ce04 h1:zK/Yft5oP6Fvd992f7Ct4cH9nqureN2Jz9d2YQ6Aps8=
+github.com/gregoryv/asserter v0.3.1-0.20200620185907-332cdf62ce04/go.mod h1:WjMhNLh0zjyvgOQpWWx8Om0n7jlgMzTn7qgKhJeH8ew=
+github.com/gregoryv/draw v0.9.0/go.mod h1:aIBRpJ6WIOpnpgHjb2t2kthKZM74x55TGea+ZIElVwg=
+github.com/gregoryv/find v0.0.0-20180328085109-1bbc2d70c482/go.mod h1:/xxQlO62bzxhyabf2iKJzGJa+VAJy25spLI/6ICTrxU=
+github.com/gregoryv/fox v0.2.0/go.mod h1:TIjp1KNSs4u5psYeHElpkZTAuj2SKuELviyJokIqjSs=
+github.com/gregoryv/fox v0.3.1 h1:55Xk+pcVvOVCyvWDg5CNYZ1iNNVwXjeOjhB+8UEPFUA=
+github.com/gregoryv/fox v0.3.1/go.mod h1:YHFvaSSaw6+XapVnfD27LIPcOMixy5PhLHC1h3SB24w=
+github.com/gregoryv/gocyclo v0.0.0-20180305144948-0be7902fabdc/go.mod h1:x/QA8cT1gfn/XriQ/CVNX7I8IM4Z2YJAAEWFym2clZI=
+github.com/gregoryv/golden v0.3.1/go.mod h1:gwYSBOmvGF+fefo7P1PyBpAqqvYx6S85dmkUaI6QMU4=
+github.com/gregoryv/nugo v0.2.0 h1:hx/YjN4yuwb5IDnJRiWmxW2xPQZiMKIsgFOQ9TO2poA=
+github.com/gregoryv/nugo v0.2.0/go.mod h1:va1vYkJFTGovPSmSVrJmoKQke7ipS2iXAbA8Fnt/jOU=
+github.com/gregoryv/nugo v0.2.1-0.20200717062129-fe1e491efc3b h1:WEUGidNhdYG/mwnco6Lgt8jmik33wXExpExg75Ik0oY=
+github.com/gregoryv/nugo v0.2.1-0.20200717062129-fe1e491efc3b/go.mod h1:va1vYkJFTGovPSmSVrJmoKQke7ipS2iXAbA8Fnt/jOU=
+github.com/gregoryv/qual v0.2.1/go.mod h1:5M5kejbZgxtswBGeoXC1yh4CP94W3FFv5o60BflBlnY=
+github.com/gregoryv/qual v0.4.0/go.mod h1:dB0ZUMaE5qieQ975kKI7A4CDfg6wgcsPcSlY1SWuq9Y=
