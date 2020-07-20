@@ -30,6 +30,7 @@ type Cmd struct {
 	// Access to system with a specific account
 	Sys *Syscall
 
+	In  io.Reader
 	Out io.Writer
 }
 
