@@ -18,6 +18,19 @@ type Syscall struct {
 	auditer fox.Logger // used to audit who executes what
 }
 
+// SetOwner
+func (me *Syscall) SetOwner(abspath string, uid int) error {
+	n, err := me.stat(abspath)
+	if err != nil {
+		return wrap("SetOwner", err)
+	}
+	if !me.acc.Owns(n) && me.acc != Root {
+		return fmt.Errorf("SetOwner: %v not owner of %s", me.acc.uid, abspath)
+	}
+	n.SetUID(uid)
+	return nil
+}
+
 // SetMode sets the mode of abspath if the caller is the owner or Root.
 // Only permissions bits can be set for now.
 func (me *Syscall) SetMode(abspath string, mode Mode) error {
