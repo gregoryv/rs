@@ -171,6 +171,11 @@ func (me *Syscall) Load(res interface{}, abspath string) error {
 	}
 }
 
+// LoadAccount
+func (me *Syscall) LoadAccount(acc *Account, name string) error {
+	return me.Load(acc, "/etc/accounts/"+name+".account")
+}
+
 // Install resource at the absolute path
 func (me *Syscall) Install(abspath string, cmd Executable, mode nugo.NodeMode,
 ) (*ResInfo, error) {
@@ -246,7 +251,7 @@ func (me *Syscall) AddAccount(acc *Account) error {
 		}
 	}
 	me.System.accounts = append(me.System.accounts, acc)
-	abspath := fmt.Sprintf("/etc/accounts/%s.acc", acc.name)
+	abspath := fmt.Sprintf("/etc/accounts/%s.account", acc.name)
 	return me.Save(abspath, acc)
 }
 

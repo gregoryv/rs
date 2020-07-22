@@ -41,6 +41,7 @@ func installSys(sys *System) {
 	asRoot.Mkdir("/bin", 01755)
 	asRoot.Mkdir("/etc", 00755)
 	asRoot.Mkdir("/etc/accounts", 00755)
+	asRoot.Mkdir("/etc/groups", 00755)
 	asRoot.Mkdir("/tmp", 07777)
 	asRoot.Install("/bin/chmod", ExecFunc(Chmod), 00755)
 	asRoot.Install("/bin/chown", &Chown{}, 00755)

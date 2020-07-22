@@ -50,7 +50,7 @@ func (me *Chown) parseOwner(sys *Syscall, v string) (uid int, gid int, err error
 	parts := strings.Split(v, ":")
 	owner := parts[0]
 	var acc Account
-	err = sys.Load(&acc, "/etc/accounts/"+owner+".acc")
+	err = sys.LoadAccount(&acc, owner)
 	if err != nil {
 		return
 	}

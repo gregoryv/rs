@@ -13,7 +13,8 @@ func Example_defaultResourceSystem() {
 	// ----rwxr-xr-x 1 1 /bin/mkdir
 	// d---rwxr-xr-x 1 1 /etc
 	// d---rwxr-xr-x 1 1 /etc/accounts
-	// ----rw-r--r-- 1 1 /etc/accounts/anonymous.acc
-	// ----rw-r--r-- 1 1 /etc/accounts/root.acc
+	// ----rw-r--r-- 1 1 /etc/accounts/anonymous.account
+	// ----rw-r--r-- 1 1 /etc/accounts/root.account
+	// d---rwxr-xr-x 1 1 /etc/groups
 	// drwxrwxrwxrwx 1 1 /tmp
 }

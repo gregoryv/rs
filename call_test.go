@@ -181,10 +181,10 @@ func TestSyscall_Exec_asRoot(t *testing.T) {
 
 func ExampleSyscall_Stat() {
 	sys := Anonymous.Use(NewSystem())
-	_, err := sys.Stat("/etc/accounts/root.acc")
+	_, err := sys.Stat("/etc/accounts/root.account")
 	fmt.Println(err)
 	// output:
-	// Stat /etc/accounts/root.acc uid:0: d---rwxr-xr-x 1 1 exec denied
+	// Stat /etc/accounts/root.account uid:0: d---rwxr-xr-x 1 1 exec denied
 }
 
 func TestSystem_Stat_asRoot(t *testing.T) {
@@ -214,7 +214,7 @@ func TestSyscall_AddAccount(t *testing.T) {
 	bad(asRoot.AddAccount(Root))
 	ok(asRoot.AddAccount(NewAccount("eva", 3)))
 	var eva Account
-	ok(asRoot.Load(&eva, "/etc/accounts/eva.acc"))
+	ok(asRoot.LoadAccount(&eva, "eva"))
 	assert := asserter.New(t)
 	assert().Equals(eva.uid, 3)
 }
