@@ -7,6 +7,7 @@ func Example_defaultResourceSystem() {
 	// output:
 	// d--xrwxr-xr-x 1 1 /bin
 	// ----rwxr-xr-x 1 1 /bin/chmod
+	// ----rwxr-xr-x 1 1 /bin/chown
 	// ---xrwxr-xr-x 1 1 /bin/ls
 	// ----rwxr-xr-x 1 1 /bin/mkacc
 	// ----rwxr-xr-x 1 1 /bin/mkdir
