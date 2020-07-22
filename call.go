@@ -18,6 +18,19 @@ type Syscall struct {
 	auditer fox.Logger // used to audit who executes what
 }
 
+// SetGroup
+func (me *Syscall) SetGroup(abspath string, gid int) error {
+	n, err := me.stat(abspath)
+	if err != nil {
+		return wrap("SetGroup", err)
+	}
+	if !me.acc.Owns(n) && me.acc != Root {
+		return fmt.Errorf("SetGroup: %v not owner of %s", me.acc.uid, abspath)
+	}
+	n.SetGID(gid)
+	return nil
+}
+
 // SetOwner
 func (me *Syscall) SetOwner(abspath string, uid int) error {
 	n, err := me.stat(abspath)

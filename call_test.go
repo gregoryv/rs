@@ -7,6 +7,19 @@ import (
 	"github.com/gregoryv/asserter"
 )
 
+func TestSyscall_SetGroup_asRoot(t *testing.T) {
+	asRoot := Root.Use(NewSystem())
+	ok, bad := asserter.NewErrors(t)
+	ok(asRoot.SetGroup("/tmp", 2))
+	bad(asRoot.SetGroup("/nosuch", 2))
+}
+
+func TestSyscall_SetGroup_asAnonymous(t *testing.T) {
+	asAnonymous := Anonymous.Use(NewSystem())
+	_, bad := asserter.NewErrors(t)
+	bad(asAnonymous.SetGroup("/tmp", 2))
+}
+
 func TestSyscall_SetOwner_asRoot(t *testing.T) {
 	asRoot := Root.Use(NewSystem())
 	ok, bad := asserter.NewErrors(t)

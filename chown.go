@@ -21,16 +21,18 @@ func (me *Chown) Exec(cmd *Cmd) ExecErr {
 	if len(flags.Args()) < 2 {
 		return fmt.Errorf("chown: missing path")
 	}
-	parts := strings.Split(flags.Arg(0), ".")
-	owner := parts[0]
-	var acc Account
-	err := cmd.Sys.Load(&acc, "/etc/accounts/"+owner+".acc")
+	uid, gid, err := me.parseOwner(cmd.Sys, flags.Arg(0))
 	if err != nil {
 		return err
 	}
 	for _, path := range cmd.Args[1:] {
-		if err := cmd.Sys.SetOwner(path, acc.uid); err != nil {
+		if err := cmd.Sys.SetOwner(path, uid); err != nil {
 			return fmt.Errorf("chown: %w", err)
+		}
+		if gid > -1 {
+			if err := cmd.Sys.SetGroup(path, gid); err != nil {
+				return fmt.Errorf("chown: %w", err)
+			}
 		}
 	}
 	return nil
@@ -39,4 +41,19 @@ func (me *Chown) Exec(cmd *Cmd) ExecErr {
 func (me *Chown) WriteUsage(w io.Writer) {
 	p, _ := nexus.NewPrinter(w)
 	p.Println("Usage: chown OWNER ...paths")
+}
+
+// parseOwner parses OWNER[:GROUP]
+func (me *Chown) parseOwner(sys *Syscall, v string) (uid int, gid int, err error) {
+	uid = -1
+	gid = -1
+	parts := strings.Split(v, ":")
+	owner := parts[0]
+	var acc Account
+	err = sys.Load(&acc, "/etc/accounts/"+owner+".acc")
+	if err != nil {
+		return
+	}
+	uid = acc.uid
+	return
 }

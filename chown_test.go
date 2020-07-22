@@ -12,7 +12,7 @@ func TestChown_asRoot(t *testing.T) {
 	ok, bad := asserter.NewFatalErrors(t)
 	ok(asRoot.Exec("/bin/mkacc john"))
 	ok(asRoot.Exec("/bin/chown john /tmp"))
-	ok(asRoot.Exec("/bin/chown john.john /tmp"))
+	ok(asRoot.Exec("/bin/chown john:john /tmp"))
 	bad(asRoot.Exec("/bin/chown")).Log("missing args")
 	bad(asRoot.Exec("/bin/chown john /nosuch")).Log("missing resource")
 	bad(asRoot.Exec("/bin/chown clark /tmp")).Log("account missing")
