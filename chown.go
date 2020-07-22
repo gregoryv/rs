@@ -1,8 +1,23 @@
 package rs
 
-import "fmt"
+import (
+	"flag"
+	"fmt"
+	"io"
 
-func Chown(cmd *Cmd) ExecErr {
+	"github.com/gregoryv/nexus"
+)
+
+type Chown struct{}
+
+func (me *Chown) Exec(cmd *Cmd) ExecErr {
+	flags := flag.NewFlagSet("chown", flag.ContinueOnError)
+	flags.Usage = func() { me.WriteUsage(cmd.Out) }
+	flags.SetOutput(cmd.Out)
+	if err := flags.Parse(cmd.Args); err != nil {
+		return err
+	}
+
 	if len(cmd.Args) < 2 {
 		return fmt.Errorf("chown: missing path")
 	}
@@ -18,4 +33,10 @@ func Chown(cmd *Cmd) ExecErr {
 		}
 	}
 	return nil
+}
+
+// WriteUsage
+func (me *Chown) WriteUsage(w io.Writer) {
+	p, _ := nexus.NewPrinter(w)
+	p.Println("Usage: chown OWNER ...paths")
 }

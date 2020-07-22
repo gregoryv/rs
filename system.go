@@ -43,7 +43,7 @@ func installSys(sys *System) {
 	asRoot.Mkdir("/etc/accounts", 00755)
 	asRoot.Mkdir("/tmp", 07777)
 	asRoot.Install("/bin/chmod", ExecFunc(Chmod), 00755)
-	asRoot.Install("/bin/chown", ExecFunc(Chown), 00755)
+	asRoot.Install("/bin/chown", &Chown{}, 00755)
 	asRoot.Install("/bin/mkdir", ExecFunc(Mkdir), 00755)
 	asRoot.Install("/bin/ls", ExecFunc(Ls), 01755)
 	asRoot.Install("/bin/mkacc", ExecFunc(Mkacc), 00755)
