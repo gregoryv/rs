@@ -72,6 +72,16 @@ func (me *System) NextUID() int {
 	return uid + 1
 }
 
+// accountByUID
+func (me *System) accountByUID(uid int) (*Account, error) {
+	for _, acc := range me.accounts {
+		if acc.uid == uid {
+			return acc, nil
+		}
+	}
+	return nil, fmt.Errorf("uid %v not found", uid)
+}
+
 // NextGID returns next available gid
 func (me *System) NextGID() int {
 	var gid int

@@ -11,6 +11,13 @@ import (
 	"github.com/gregoryv/nugo"
 )
 
+func TestSystem_accountByUID(t *testing.T) {
+	sys := NewSystem()
+	ok, bad := asserter.NewMixed(t)
+	ok(sys.accountByUID(0))
+	bad(sys.accountByUID(99))
+}
+
 func TestSystem_SetAuditer(t *testing.T) {
 	var (
 		buf     bytes.Buffer
