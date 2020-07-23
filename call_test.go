@@ -208,7 +208,7 @@ func TestSystem_Install_asAnonymous(t *testing.T) {
 	bad(asAnonymous.Install("/bin/x", nil, 0))
 }
 
-func TestSyscall_AddAccount(t *testing.T) {
+func TestSyscall_AddAccount_asRoot(t *testing.T) {
 	asRoot := Root.Use(NewSystem())
 	ok, bad := asserter.NewFatalErrors(t)
 	bad(asRoot.AddAccount(Root))
@@ -217,4 +217,10 @@ func TestSyscall_AddAccount(t *testing.T) {
 	ok(asRoot.LoadAccount(&eva, "eva"))
 	assert := asserter.New(t)
 	assert().Equals(eva.uid, 3)
+}
+
+func TestSyscall_AddAccount_asJohn(t *testing.T) {
+	asJohn := John.Use(NewSystem())
+	_, bad := asserter.NewFatalErrors(t)
+	bad(asJohn.AddAccount(John))
 }
