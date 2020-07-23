@@ -224,3 +224,17 @@ func TestSyscall_AddAccount_asJohn(t *testing.T) {
 	_, bad := asserter.NewFatalErrors(t)
 	bad(asJohn.AddAccount(John))
 }
+
+func TestSyscall_AddGroup_asRoot(t *testing.T) {
+	asRoot := Root.Use(NewSystem())
+	ok, bad := asserter.NewFatalErrors(t)
+	ok(asRoot.AddGroup(&Group{name: "new", gid: 100}))
+	bad(asRoot.AddGroup(&Group{name: "new", gid: 100}))
+	bad(asRoot.AddGroup(&Group{name: "new", gid: 101}))
+}
+
+func TestSyscall_AddGroup_asJohn(t *testing.T) {
+	asJohn := John.Use(NewSystem())
+	_, bad := asserter.NewFatalErrors(t)
+	bad(asJohn.AddGroup(&Group{name: "new", gid: 100}))
+}
