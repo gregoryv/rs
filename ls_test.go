@@ -20,8 +20,8 @@ func TestLs(t *testing.T) {
 	bad(asRoot.Exec("/bin/ls /nosuch"))
 	// ls directory is covered by Examples
 	// ls file
-	asRoot.Fexec(&buf, "/bin/ls", "-l", "/etc/accounts/root.account")
-	exp := "----rw-r--r-- 1 1 root.account\n"
+	asRoot.Fexec(&buf, "/bin/ls", "-l", "/etc/accounts/root")
+	exp := "----rw-r--r-- 1 1 root\n"
 	assert := asserter.New(t)
 	assert().Equals(buf.String(), exp)
 

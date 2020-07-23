@@ -95,6 +95,16 @@ func (me *System) NextGID() int {
 	return gid + 1
 }
 
+// groupByGID
+func (me *System) groupByGID(gid int) (*Group, error) {
+	for _, group := range me.groups {
+		if group.gid == gid {
+			return group, nil
+		}
+	}
+	return nil, fmt.Errorf("gid %v not found", gid)
+}
+
 // SetAuditer sets the auditer for Syscall.Exec calls
 func (me *System) SetAuditer(auditer fox.Logger) *System {
 	me.auditer = auditer

@@ -181,10 +181,10 @@ func TestSyscall_Exec_asRoot(t *testing.T) {
 
 func ExampleSyscall_Stat() {
 	sys := Anonymous.Use(NewSystem())
-	_, err := sys.Stat("/etc/accounts/root.account")
+	_, err := sys.Stat("/etc/accounts/root")
 	fmt.Println(err)
 	// output:
-	// Stat /etc/accounts/root.account uid:0: d---rwxr-xr-x 1 1 exec denied
+	// Stat /etc/accounts/root uid:0: d---rwxr-xr-x 1 1 exec denied
 }
 
 func TestSystem_Stat_asRoot(t *testing.T) {

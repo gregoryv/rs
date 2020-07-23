@@ -11,6 +11,13 @@ import (
 	"github.com/gregoryv/nugo"
 )
 
+func TestSystem_groupByGID(t *testing.T) {
+	sys := NewSystem()
+	ok, bad := asserter.NewMixed(t)
+	ok(sys.groupByGID(0))
+	bad(sys.groupByGID(99))
+}
+
 func TestSystem_accountByUID(t *testing.T) {
 	sys := NewSystem()
 	ok, bad := asserter.NewMixed(t)
