@@ -176,6 +176,10 @@ func (me *Syscall) LoadAccount(acc *Account, name string) error {
 	return me.Load(acc, "/etc/accounts/"+name)
 }
 
+func (me *Syscall) LoadGroup(group *Group, name string) error {
+	return me.Load(group, "/etc/groups/"+name)
+}
+
 // Install resource at the absolute path
 func (me *Syscall) Install(abspath string, cmd Executable, mode nugo.NodeMode,
 ) (*ResInfo, error) {

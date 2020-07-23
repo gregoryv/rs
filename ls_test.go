@@ -13,7 +13,7 @@ import (
 func TestLs(t *testing.T) {
 	sys := NewSystem()
 	asRoot := Root.Use(sys)
-	asJohn := NewAccount("john", 2).Use(sys)
+	asJohn := John.Use(sys)
 	var buf bytes.Buffer
 	ok, bad := asserter.NewErrors(t)
 	bad(asRoot.Exec("/bin/ls -xx"))

@@ -30,9 +30,8 @@ func (me *Chown) Exec(cmd *Cmd) ExecErr {
 			return fmt.Errorf("chown: %w", err)
 		}
 		if gid > -1 {
-			if err := cmd.Sys.SetGroup(path, gid); err != nil {
-				return fmt.Errorf("chown: %w", err)
-			}
+			// if SetOwner worked so should this
+			cmd.Sys.SetGroup(path, gid)
 		}
 	}
 	return nil
@@ -50,10 +49,17 @@ func (me *Chown) parseOwner(sys *Syscall, v string) (uid int, gid int, err error
 	parts := strings.Split(v, ":")
 	owner := parts[0]
 	var acc Account
-	err = sys.LoadAccount(&acc, owner)
-	if err != nil {
+	if err = sys.LoadAccount(&acc, owner); err != nil {
 		return
 	}
 	uid = acc.uid
+	if len(parts) == 2 {
+		groupName := parts[1]
+		var group Group
+		if err = sys.LoadGroup(&group, groupName); err != nil {
+			return
+		}
+		gid = group.gid
+	}
 	return
 }
