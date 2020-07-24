@@ -218,6 +218,14 @@ func TestSyscall_AddAccount_asRoot(t *testing.T) {
 	assert().Equals(eva.uid, 3)
 }
 
+func TestSyscall_AddAccount_withEmail(t *testing.T) {
+	asRoot := Root.Use(NewSystem())
+	ok, _ := asserter.NewFatalErrors(t)
+	ok(asRoot.AddAccount(NewAccount("john@example.com", 3)))
+	var acc Account
+	ok(asRoot.LoadAccount(&acc, "john@example.com"))
+}
+
 func TestSyscall_AddAccount_bad(t *testing.T) {
 	asRoot := Root.Use(NewSystem())
 	_, bad := asserter.NewFatalErrors(t)
