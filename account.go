@@ -95,8 +95,8 @@ func (me *Account) Use(sys *System) *Syscall {
 	}
 }
 
-// Owns returns tru if the account uid mathes the given id
-func (me *Account) Owns(s nugo.Sealed) bool {
+// owns returns true if the account uid mathes the given id
+func (me *Account) owns(s nugo.Sealed) bool {
 	return me.uid == s.Seal().UID
 }
 

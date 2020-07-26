@@ -24,7 +24,7 @@ func (me *Syscall) SetGroup(abspath string, gid int) error {
 	if err != nil {
 		return wrap("SetGroup", err)
 	}
-	if !me.acc.Owns(n) && me.acc != Root {
+	if !me.acc.owns(n) && me.acc != Root {
 		return fmt.Errorf("SetGroup: %v not owner of %s", me.acc.uid, abspath)
 	}
 	n.SetGID(gid)
@@ -37,7 +37,7 @@ func (me *Syscall) SetOwner(abspath string, uid int) error {
 	if err != nil {
 		return wrap("SetOwner", err)
 	}
-	if !me.acc.Owns(n) && me.acc != Root {
+	if !me.acc.owns(n) && me.acc != Root {
 		return fmt.Errorf("SetOwner: %v not owner of %s", me.acc.uid, abspath)
 	}
 	n.SetUID(uid)
@@ -51,7 +51,7 @@ func (me *Syscall) SetMode(abspath string, mode Mode) error {
 	if err != nil {
 		return wrap("SetMode", err)
 	}
-	if !me.acc.Owns(n) && me.acc != Root {
+	if !me.acc.owns(n) && me.acc != Root {
 		return fmt.Errorf("SetMode: %v not owner of %s", me.acc.uid, abspath)
 	}
 	if nugo.NodeMode(mode) > nugo.ModePerm {

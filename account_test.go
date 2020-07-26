@@ -25,12 +25,12 @@ func TestAccount_leaveGroup(t *testing.T) {
 	}
 }
 
-func TestAccount_Owns(t *testing.T) {
+func TestAccount_owns(t *testing.T) {
 	acc := NewAccount("root", 1)
 	n := nugo.NewNode("x")
 	n.SetUID(2)
-	if acc.Owns(n) {
-		t.Error("uid 1 Owns uid 2")
+	if acc.owns(n) {
+		t.Error("uid 1 owns uid 2")
 	}
 }
 
