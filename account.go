@@ -39,7 +39,7 @@ type account struct {
 	Groups []int
 }
 
-// WriteTo
+// WriteTo gob encodes the account to the given writer. Always returns 0 bytes written.
 func (me *Account) WriteTo(w io.Writer) (int64, error) {
 	a := account{
 		Name:   me.name,
@@ -49,7 +49,7 @@ func (me *Account) WriteTo(w io.Writer) (int64, error) {
 	return 0, gob.NewEncoder(w).Encode(&a)
 }
 
-// ReadFrom
+// ReadFrom reads gob encoded account from the given reader. Opposite of WriteTo.
 func (me *Account) ReadFrom(r io.Reader) (int64, error) {
 	var a account
 	err := gob.NewDecoder(r).Decode(&a)
