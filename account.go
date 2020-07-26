@@ -75,7 +75,7 @@ func (me *Account) joinGroup(gid int) {
 }
 
 // todo hide as command
-func (me *Account) DelGroup(gid int) {
+func (me *Account) leaveGroup(gid int) {
 	for i, id := range me.groups {
 		if id == gid {
 			me.mu.Lock()

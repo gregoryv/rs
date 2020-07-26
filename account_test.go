@@ -16,10 +16,10 @@ func TestAccount_joinGroup(t *testing.T) {
 	}
 }
 
-func TestAccount_DelGroup(t *testing.T) {
+func TestAccount_leaveGroup(t *testing.T) {
 	acc := NewAccount("root", 1)
 	acc.joinGroup(2)
-	acc.DelGroup(2)
+	acc.leaveGroup(2)
 	if len(acc.groups) != 1 {
 		t.Fail()
 	}
