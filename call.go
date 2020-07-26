@@ -254,7 +254,7 @@ func (me *Syscall) AddAccount(acc *Account) error {
 			return fmt.Errorf("name exists")
 		}
 	}
-	me.JoinGroup(&Group{name: acc.name, gid: acc.groups[0]})
+	me.joinGroup(&Group{name: acc.name, gid: acc.groups[0]})
 	abspath := fmt.Sprintf("/etc/accounts/%s", acc.name)
 	if err := me.Save(abspath, acc); err != nil {
 		return err
@@ -263,9 +263,9 @@ func (me *Syscall) AddAccount(acc *Account) error {
 	return nil
 }
 
-// JoinGroup adds a new group to the system. Name and uid must be
+// joinGroup adds a new group to the system. Name and uid must be
 // unique.
-func (me *Syscall) JoinGroup(group *Group) error {
+func (me *Syscall) joinGroup(group *Group) error {
 	for _, existing := range me.System.groups {
 		if existing.gid == group.gid {
 			return fmt.Errorf("gid exists")

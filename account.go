@@ -63,7 +63,7 @@ func (me *Account) ReadFrom(r io.Reader) (int64, error) {
 func (my *Account) gid() int { return my.groups[0] }
 
 // todo hide as command
-func (me *Account) JoinGroup(gid int) {
+func (me *Account) joinGroup(gid int) {
 	for _, id := range me.groups {
 		if id == gid {
 			return
