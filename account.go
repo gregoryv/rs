@@ -1,10 +1,8 @@
 package rs
 
 import (
-	"encoding/gob"
 	"errors"
 	"fmt"
-	"io"
 	"sync"
 
 	"github.com/gregoryv/nugo"
@@ -17,69 +15,43 @@ var (
 
 // NewAccount returns a new account with the given uid as both uid and
 // group id.
-func NewAccount(name string, uid int) *Account {
+func NewAccount(Name string, uid int) *Account {
 	return &Account{
-		name:   name,
-		uid:    uid,
-		groups: []int{uid},
+		Name:   Name,
+		UID:    uid,
+		Groups: []int{uid},
 	}
 }
 
 type Account struct {
-	name string
-	uid  int
+	Name string
+	UID  int
 
 	mu     sync.Mutex
-	groups []int
-}
-
-type account struct {
-	Name   string
-	UID    int
 	Groups []int
 }
 
-// WriteTo gob encodes the account to the given writer. Always returns 0 bytes written.
-func (me *Account) WriteTo(w io.Writer) (int64, error) {
-	a := account{
-		Name:   me.name,
-		UID:    me.uid,
-		Groups: me.groups,
-	}
-	return 0, gob.NewEncoder(w).Encode(&a)
-}
-
-// ReadFrom reads gob encoded account from the given reader. Opposite of WriteTo.
-func (me *Account) ReadFrom(r io.Reader) (int64, error) {
-	var a account
-	err := gob.NewDecoder(r).Decode(&a)
-	me.name = a.Name
-	me.uid = a.UID
-	me.groups = a.Groups
-	return 0, err
-}
-
 // gid returns the first group id of the account
-func (my *Account) gid() int { return my.groups[0] }
+func (my *Account) gid() int { return my.Groups[0] }
 
 // todo hide as command
 func (me *Account) joinGroup(gid int) {
-	for _, id := range me.groups {
+	for _, id := range me.Groups {
 		if id == gid {
 			return
 		}
 	}
 	me.mu.Lock()
-	me.groups = append(me.groups, gid)
+	me.Groups = append(me.Groups, gid)
 	me.mu.Unlock()
 }
 
 // todo hide as command
 func (me *Account) leaveGroup(gid int) {
-	for i, id := range me.groups {
+	for i, id := range me.Groups {
 		if id == gid {
 			me.mu.Lock()
-			me.groups = append(me.groups[:i], me.groups[i+1:]...)
+			me.Groups = append(me.Groups[:i], me.Groups[i+1:]...)
 			me.mu.Unlock()
 			return
 		}
@@ -97,22 +69,22 @@ func (me *Account) Use(sys *System) *Syscall {
 
 // owns returns true if the account uid mathes the given id
 func (me *Account) owns(s nugo.Sealed) bool {
-	return me.uid == s.Seal().UID
+	return me.UID == s.Seal().UID
 }
 
 // permitted returns error if account does not have operation
 // permission to the given seal.
 func (my *Account) permitted(op operation, s nugo.Sealed) error {
-	if my.uid == Root.uid {
+	if my.UID == Root.UID {
 		return nil
 	}
 	n, u, g, o := op.Modes()
 	seal := s.Seal()
 	switch {
-	case my.uid == 0 && (seal.Mode&n == n): // anonymous
-	case my.uid == seal.UID && (seal.Mode&u == u): // owner
+	case my.UID == 0 && (seal.Mode&n == n): // anonymous
+	case my.UID == seal.UID && (seal.Mode&u == u): // owner
 	case my.member(seal.GID) && (seal.Mode&g == g): // group
-	case my.uid > 0 && seal.Mode&o == o: // other
+	case my.UID > 0 && seal.Mode&o == o: // other
 	default:
 		return fmt.Errorf("%v %v denied", seal, op)
 	}
@@ -122,7 +94,7 @@ func (my *Account) permitted(op operation, s nugo.Sealed) error {
 var ErrPermissionDenied = errors.New("permission denied")
 
 func (my *Account) member(gid int) bool {
-	for _, id := range my.groups {
+	for _, id := range my.Groups {
 		if id == gid {
 			return true
 		}

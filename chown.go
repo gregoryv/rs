@@ -52,7 +52,7 @@ func (me *Chown) parseOwner(sys *Syscall, v string) (uid int, gid int, err error
 	if err = sys.LoadAccount(&acc, owner); err != nil {
 		return
 	}
-	uid = acc.uid
+	uid = acc.UID
 	if len(parts) == 2 {
 		groupName := parts[1]
 		var group Group

@@ -17,8 +17,8 @@ func Mkacc(cmd *Cmd) ExecErr {
 		}
 		return err
 	}
-	name := flags.Arg(0)
-	if name == "" {
+	Name := flags.Arg(0)
+	if Name == "" {
 		return fmt.Errorf("missing account name")
 	}
 	if *uid == -1 {
@@ -33,7 +33,7 @@ func Mkacc(cmd *Cmd) ExecErr {
 	if *gid < 2 {
 		return fmt.Errorf("invalid gid")
 	}
-	acc := NewAccount(name, *uid)
-	acc.groups[0] = *gid
+	acc := NewAccount(Name, *uid)
+	acc.Groups[0] = *gid
 	return cmd.Sys.AddAccount(acc)
 }

@@ -25,7 +25,7 @@ func (me *Syscall) SetGroup(abspath string, gid int) error {
 		return wrap("SetGroup", err)
 	}
 	if !me.acc.owns(n) && me.acc != Root {
-		return fmt.Errorf("SetGroup: %v not owner of %s", me.acc.uid, abspath)
+		return fmt.Errorf("SetGroup: %v not owner of %s", me.acc.UID, abspath)
 	}
 	n.SetGID(gid)
 	return nil
@@ -38,7 +38,7 @@ func (me *Syscall) SetOwner(abspath string, uid int) error {
 		return wrap("SetOwner", err)
 	}
 	if !me.acc.owns(n) && me.acc != Root {
-		return fmt.Errorf("SetOwner: %v not owner of %s", me.acc.uid, abspath)
+		return fmt.Errorf("SetOwner: %v not owner of %s", me.acc.UID, abspath)
 	}
 	n.SetUID(uid)
 	return nil
@@ -52,7 +52,7 @@ func (me *Syscall) SetMode(abspath string, mode Mode) error {
 		return wrap("SetMode", err)
 	}
 	if !me.acc.owns(n) && me.acc != Root {
-		return fmt.Errorf("SetMode: %v not owner of %s", me.acc.uid, abspath)
+		return fmt.Errorf("SetMode: %v not owner of %s", me.acc.UID, abspath)
 	}
 	if nugo.NodeMode(mode) > nugo.ModePerm {
 		return fmt.Errorf("SetMode: invalid mode")
@@ -103,7 +103,7 @@ func (me *Syscall) Create(abspath string) (*Resource, error) {
 	if rif != nil && rif.IsDir() == nil {
 		return nil, fmt.Errorf("Create: %s is a directory", abspath)
 	}
-	dir, name := path.Split(abspath)
+	dir, Name := path.Split(abspath)
 	parent, err := me.Stat(dir)
 	if err != nil {
 		return nil, wrap("Create", err)
@@ -111,7 +111,7 @@ func (me *Syscall) Create(abspath string) (*Resource, error) {
 	if err := me.acc.permitted(OpWrite, parent.node); err != nil {
 		return nil, wrap("Create", err)
 	}
-	n := parent.node.Make(name)
+	n := parent.node.Make(Name)
 	n.SetPerm(00644)
 	n.UnsetMode(nugo.ModeDir)
 	n.Lock()
@@ -172,18 +172,18 @@ func (me *Syscall) Load(res interface{}, abspath string) error {
 }
 
 // LoadAccount
-func (me *Syscall) LoadAccount(acc *Account, name string) error {
-	return me.Load(acc, "/etc/accounts/"+name)
+func (me *Syscall) LoadAccount(acc *Account, Name string) error {
+	return me.Load(acc, "/etc/accounts/"+Name)
 }
 
-func (me *Syscall) LoadGroup(group *Group, name string) error {
-	return me.Load(group, "/etc/groups/"+name)
+func (me *Syscall) LoadGroup(group *Group, Name string) error {
+	return me.Load(group, "/etc/groups/"+Name)
 }
 
 // Install resource at the absolute path
 func (me *Syscall) Install(abspath string, cmd Executable, mode nugo.NodeMode,
 ) (*ResInfo, error) {
-	dir, name := path.Split(abspath)
+	dir, Name := path.Split(abspath)
 	parent, err := me.Stat(dir)
 	if err != nil {
 		return nil, wrap("Install", err)
@@ -191,7 +191,7 @@ func (me *Syscall) Install(abspath string, cmd Executable, mode nugo.NodeMode,
 	if err := me.acc.permitted(OpWrite, parent.node); err != nil {
 		return nil, wrap("Install", err)
 	}
-	n := parent.node.Make(name)
+	n := parent.node.Make(Name)
 	n.SetPerm(mode)
 	n.SetSource(cmd)
 	n.UnsetMode(nugo.ModeDir)
@@ -227,7 +227,7 @@ func (me *Syscall) ExecCmd(cmd *Cmd) error {
 		cmd.Sys = me
 		err = src.Exec(cmd)
 		if me.auditer != nil {
-			msg := fmt.Sprintf("%v %s", me.acc.uid, cmd.String())
+			msg := fmt.Sprintf("%v %s", me.acc.UID, cmd.String())
 			if err != nil {
 				// don't audit the actual error message, leave that to
 				// other form of logging
@@ -247,15 +247,15 @@ type Mode nugo.NodeMode
 // unique.
 func (me *Syscall) AddAccount(acc *Account) error {
 	for _, existing := range me.System.accounts {
-		if existing.uid == acc.uid {
+		if existing.UID == acc.UID {
 			return fmt.Errorf("uid exists")
 		}
-		if existing.name == acc.name {
+		if existing.Name == acc.Name {
 			return fmt.Errorf("name exists")
 		}
 	}
-	me.joinGroup(&Group{name: acc.name, gid: acc.groups[0]})
-	abspath := fmt.Sprintf("/etc/accounts/%s", acc.name)
+	me.joinGroup(&Group{Name: acc.Name, gid: acc.Groups[0]})
+	abspath := fmt.Sprintf("/etc/accounts/%s", acc.Name)
 	if err := me.Save(abspath, acc); err != nil {
 		return err
 	}
@@ -266,23 +266,23 @@ func (me *Syscall) AddAccount(acc *Account) error {
 // joinGroup adds a new group to the system. Name and uid must be
 // unique.
 func (me *Syscall) joinGroup(group *Group) error {
-	for _, existing := range me.System.groups {
+	for _, existing := range me.System.Groups {
 		if existing.gid == group.gid {
 			return fmt.Errorf("gid exists")
 		}
-		if existing.name == group.name {
+		if existing.Name == group.Name {
 			return fmt.Errorf("name exists")
 		}
 	}
-	me.System.groups = append(me.System.groups, group)
-	abspath := fmt.Sprintf("/etc/groups/%s", group.name)
+	me.System.Groups = append(me.System.Groups, group)
+	abspath := fmt.Sprintf("/etc/groups/%s", group.Name)
 	return me.Save(abspath, group)
 }
 
 // Mkdir creates the absolute path whith a given mode where the parent
 // must exist.
 func (me *Syscall) Mkdir(abspath string, mode Mode) (*ResInfo, error) {
-	dir, name := path.Split(abspath)
+	dir, Name := path.Split(abspath)
 	parent, err := me.stat(dir)
 	if err != nil {
 		return nil, fmt.Errorf("Mkdir: %w", err)
@@ -290,7 +290,7 @@ func (me *Syscall) Mkdir(abspath string, mode Mode) (*ResInfo, error) {
 	if err := me.acc.permitted(OpWrite, parent); err != nil {
 		return nil, fmt.Errorf("Mkdir: %w", err)
 	}
-	n := parent.Make(name)
+	n := parent.Make(Name)
 	n.SetPerm(nugo.NodeMode(mode))
 	return &ResInfo{node: n}, nil
 }
@@ -317,7 +317,7 @@ func (me *Syscall) stat(abspath string) (*nugo.Node, error) {
 	// check each parent for access
 	for parent != nil {
 		if err := me.acc.permitted(OpExec, parent); err != nil {
-			return nil, fmt.Errorf("%s uid:%d: %v", abspath, me.acc.uid, err)
+			return nil, fmt.Errorf("%s uid:%d: %v", abspath, me.acc.UID, err)
 		}
 		parent = parent.Parent()
 	}
@@ -334,7 +334,7 @@ func wrap(prefix string, err error) error {
 // mount creates a root node for the given path.
 func (me *Syscall) mount(abspath string, mode nugo.NodeMode) error {
 	rn := nugo.NewRootNode(abspath, mode)
-	rn.SetSeal(me.acc.uid, me.acc.gid(), 01755)
+	rn.SetSeal(me.acc.UID, me.acc.gid(), 01755)
 	return me.System.mount(rn)
 }
 

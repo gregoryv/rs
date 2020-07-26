@@ -215,7 +215,7 @@ func TestSyscall_AddAccount_asRoot(t *testing.T) {
 	ok(asRoot.AddAccount(NewAccount("eva", 3)))
 	ok(asRoot.LoadAccount(&eva, "eva"))
 	assert := asserter.New(t)
-	assert().Equals(eva.uid, 3)
+	assert().Equals(eva.UID, 3)
 }
 
 func TestSyscall_AddAccount_withEmail(t *testing.T) {
@@ -241,13 +241,13 @@ func TestSyscall_AddAccount_asJohn(t *testing.T) {
 func TestSyscall_joinGroup_asRoot(t *testing.T) {
 	asRoot := Root.Use(NewSystem())
 	ok, bad := asserter.NewFatalErrors(t)
-	ok(asRoot.joinGroup(&Group{name: "new", gid: 100}))
-	bad(asRoot.joinGroup(&Group{name: "new", gid: 100}))
-	bad(asRoot.joinGroup(&Group{name: "new", gid: 101}))
+	ok(asRoot.joinGroup(&Group{Name: "new", gid: 100}))
+	bad(asRoot.joinGroup(&Group{Name: "new", gid: 100}))
+	bad(asRoot.joinGroup(&Group{Name: "new", gid: 101}))
 }
 
 func TestSyscall_joinGroup_asJohn(t *testing.T) {
 	asJohn := John.Use(NewSystem())
 	_, bad := asserter.NewFatalErrors(t)
-	bad(asJohn.joinGroup(&Group{name: "new", gid: 100}))
+	bad(asJohn.joinGroup(&Group{Name: "new", gid: 100}))
 }

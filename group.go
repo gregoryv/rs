@@ -6,7 +6,7 @@ import (
 )
 
 type Group struct {
-	name string
+	Name string
 	gid  int
 }
 
@@ -18,7 +18,7 @@ type group struct {
 // WriteTo
 func (me *Group) WriteTo(w io.Writer) (int64, error) {
 	g := group{
-		Name: me.name,
+		Name: me.Name,
 		GID:  me.gid,
 	}
 	return 0, gob.NewEncoder(w).Encode(&g)
@@ -28,7 +28,7 @@ func (me *Group) WriteTo(w io.Writer) (int64, error) {
 func (me *Group) ReadFrom(r io.Reader) (int64, error) {
 	var g group
 	err := gob.NewDecoder(r).Decode(&g)
-	me.name = g.Name
+	me.Name = g.Name
 	me.gid = g.GID
 	return 0, err
 }

@@ -26,7 +26,7 @@ func NewSystem() *System {
 	sys := &System{
 		mounts:   make(map[string]*nugo.Node),
 		accounts: []*Account{},
-		groups:   []*Group{},
+		Groups:   []*Group{},
 	}
 	asRoot := Root.Use(sys)
 	asRoot.mount("/", nugo.ModeDir|nugo.ModeSort|nugo.ModeDistinct)
@@ -56,7 +56,7 @@ func installSys(sys *System) {
 type System struct {
 	mounts   map[string]*nugo.Node
 	accounts []*Account
-	groups   []*Group
+	Groups   []*Group
 
 	auditer fox.Logger // Used audit Syscall.Exec calls
 }
@@ -65,8 +65,8 @@ type System struct {
 func (me *System) NextUID() int {
 	var uid int
 	for _, acc := range me.accounts {
-		if acc.uid > uid {
-			uid = acc.uid
+		if acc.UID > uid {
+			uid = acc.UID
 		}
 	}
 	return uid + 1
@@ -75,7 +75,7 @@ func (me *System) NextUID() int {
 // accountByUID
 func (me *System) accountByUID(uid int) (*Account, error) {
 	for _, acc := range me.accounts {
-		if acc.uid == uid {
+		if acc.UID == uid {
 			return acc, nil
 		}
 	}
@@ -86,7 +86,7 @@ func (me *System) accountByUID(uid int) (*Account, error) {
 func (me *System) NextGID() int {
 	var gid int
 	for _, acc := range me.accounts {
-		for _, id := range acc.groups {
+		for _, id := range acc.Groups {
 			if id > gid {
 				gid = id
 			}
@@ -97,7 +97,7 @@ func (me *System) NextGID() int {
 
 // groupByGID
 func (me *System) groupByGID(gid int) (*Group, error) {
-	for _, group := range me.groups {
+	for _, group := range me.Groups {
 		if group.gid == gid {
 			return group, nil
 		}

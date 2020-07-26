@@ -11,7 +11,7 @@ func TestAccount_joinGroup(t *testing.T) {
 	acc := NewAccount("root", 1)
 	acc.joinGroup(2)
 	acc.joinGroup(2) // nop, already there
-	if len(acc.groups) != 2 {
+	if len(acc.Groups) != 2 {
 		t.Fail()
 	}
 }
@@ -20,7 +20,7 @@ func TestAccount_leaveGroup(t *testing.T) {
 	acc := NewAccount("root", 1)
 	acc.joinGroup(2)
 	acc.leaveGroup(2)
-	if len(acc.groups) != 1 {
+	if len(acc.Groups) != 1 {
 		t.Fail()
 	}
 }
