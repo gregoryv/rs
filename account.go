@@ -61,7 +61,7 @@ func (me *Account) leaveGroup(gid int) {
 // Use returns a Syscall struct for accessing the system.
 func (me *Account) Use(sys *System) *Syscall {
 	return &Syscall{
-		System:  sys,
+		sys:     sys,
 		acc:     me,
 		auditer: sys.auditer,
 	}

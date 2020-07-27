@@ -13,7 +13,7 @@ import (
 )
 
 type Syscall struct {
-	*System // todo should probably hide this
+	sys     *System // todo should probably hide this
 	acc     *Account
 	auditer fox.Logger // used to audit who executes what
 }
@@ -246,7 +246,7 @@ type Mode nugo.NodeMode
 // AddAccount adds a new account to the system. Name and uid must be
 // unique.
 func (me *Syscall) AddAccount(acc *Account) error {
-	for _, existing := range me.System.accounts {
+	for _, existing := range me.sys.accounts {
 		if existing.UID == acc.UID {
 			return fmt.Errorf("uid exists")
 		}
@@ -259,14 +259,14 @@ func (me *Syscall) AddAccount(acc *Account) error {
 	if err := me.Save(abspath, acc); err != nil {
 		return err
 	}
-	me.System.accounts = append(me.System.accounts, acc)
+	me.sys.accounts = append(me.sys.accounts, acc)
 	return nil
 }
 
 // joinGroup adds a new group to the system. Name and uid must be
 // unique.
 func (me *Syscall) joinGroup(group *Group) error {
-	for _, existing := range me.System.Groups {
+	for _, existing := range me.sys.Groups {
 		if existing.gid == group.gid {
 			return fmt.Errorf("gid exists")
 		}
@@ -274,7 +274,7 @@ func (me *Syscall) joinGroup(group *Group) error {
 			return fmt.Errorf("name exists")
 		}
 	}
-	me.System.Groups = append(me.System.Groups, group)
+	me.sys.Groups = append(me.sys.Groups, group)
 	abspath := fmt.Sprintf("/etc/groups/%s", group.Name)
 	return me.Save(abspath, group)
 }
@@ -308,7 +308,7 @@ func (me *Syscall) Stat(abspath string) (*ResInfo, error) {
 // stat returns the node of the abspath if account is allowed to reach
 // it, ie. all nodes up to it must have execute mode set.
 func (me *Syscall) stat(abspath string) (*nugo.Node, error) {
-	rn := me.rootNode(abspath)
+	rn := me.sys.rootNode(abspath)
 	n, err := rn.Find(abspath)
 	if err != nil {
 		return nil, err
@@ -335,9 +335,15 @@ func wrap(prefix string, err error) error {
 func (me *Syscall) mount(abspath string, mode nugo.NodeMode) error {
 	rn := nugo.NewRootNode(abspath, mode)
 	rn.SetSeal(me.acc.UID, me.acc.gid(), 01755)
-	return me.System.mount(rn)
+	return me.sys.mount(rn)
 }
 
 // Visitor is called during a walk with a specific node and the
 // absolute path to that node. Use the given Walker to stop if needed.
 type Visitor func(child *ResInfo, abspath string, w *nugo.Walker)
+
+// NextUID returns potential next user id.
+func (me *Syscall) NextUID() int { return me.sys.NextUID() }
+
+// NextGID returns potential next group id.
+func (me *Syscall) NextGID() int { return me.sys.NextGID() }
