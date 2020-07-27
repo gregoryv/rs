@@ -30,7 +30,7 @@ func TestSystem_SetAuditer(t *testing.T) {
 		buf     bytes.Buffer
 		sys     = NewSystem().SetAuditer(fox.NewSyncLog(&buf))
 		asRoot  = Root.Use(sys) // use after the auditer is set
-		asJohn  = NewAccount("john", 2).Use(sys)
+		asJohn  = John.Use(sys)
 		ok, bad = asserter.NewErrors(t)
 	)
 	bad(asJohn.Exec("/bin/mkdir /etc/s"))
