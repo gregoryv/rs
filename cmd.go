@@ -7,16 +7,6 @@ import (
 	"strings"
 )
 
-type Executable interface {
-	Exec(*Cmd) error
-}
-
-type ExecFunc func(*Cmd) error
-
-func (me ExecFunc) Exec(cmd *Cmd) error {
-	return me(cmd)
-}
-
 // NewCmd returns a new command.
 func NewCmd(abspath string, args ...string) *Cmd {
 	return &Cmd{
@@ -40,4 +30,14 @@ type Cmd struct {
 // String returns the command with its arguments
 func (me *Cmd) String() string {
 	return fmt.Sprintf("%s %s", me.Abspath, strings.Join(me.Args, " "))
+}
+
+type Executable interface {
+	Exec(*Cmd) error
+}
+
+type ExecFunc func(*Cmd) error
+
+func (me ExecFunc) Exec(cmd *Cmd) error {
+	return me(cmd)
 }
