@@ -6,7 +6,7 @@ import (
 )
 
 // Chmod command sets mode of a resource.
-func Chmod(cmd *Cmd) ExecErr {
+func Chmod(cmd *Cmd) error {
 	flags := flag.NewFlagSet("chmod", flag.ContinueOnError)
 	mode := flags.Uint("m", 0, "mode")
 	flags.SetOutput(cmd.Out)

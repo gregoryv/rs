@@ -11,7 +11,7 @@ import (
 
 type Chown struct{}
 
-func (me *Chown) Exec(cmd *Cmd) ExecErr {
+func (me *Chown) Exec(cmd *Cmd) error {
 	flags := flag.NewFlagSet("chown", flag.ContinueOnError)
 	flags.Usage = func() { me.WriteUsage(cmd.Out) }
 	flags.SetOutput(cmd.Out)

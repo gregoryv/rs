@@ -8,19 +8,22 @@ import (
 )
 
 type Executable interface {
-	Exec(*Cmd) ExecErr
+	Exec(*Cmd) error
 }
 
-type ExecFunc func(*Cmd) ExecErr
+type ExecFunc func(*Cmd) error
 
-func (me ExecFunc) Exec(cmd *Cmd) ExecErr { return me(cmd) }
-
-type ExecErr error
+func (me ExecFunc) Exec(cmd *Cmd) error {
+	return me(cmd)
+}
 
 // NewCmd returns a new command.
 func NewCmd(abspath string, args ...string) *Cmd {
 	return &Cmd{
-		Abspath: abspath, Args: args, Out: ioutil.Discard}
+		Abspath: abspath,
+		Args:    args,
+		Out:     ioutil.Discard,
+	}
 }
 
 type Cmd struct {

@@ -5,7 +5,7 @@ import (
 )
 
 // Mkdir creates directories
-func Mkdir(cmd *Cmd) ExecErr {
+func Mkdir(cmd *Cmd) error {
 	flags := flag.NewFlagSet("mkdir", flag.ContinueOnError)
 	flags.SetOutput(cmd.Out)
 	mode := flags.Uint("m", 00755, "mode for new directory")

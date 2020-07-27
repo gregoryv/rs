@@ -6,7 +6,7 @@ import (
 )
 
 // Mkacc creates an account.
-func Mkacc(cmd *Cmd) ExecErr {
+func Mkacc(cmd *Cmd) error {
 	flags := flag.NewFlagSet("mkacc", flag.ContinueOnError)
 	uid := flags.Int("uid", -1, "optional uid of the new account")
 	gid := flags.Int("gid", -1, "optional gid of the new account")

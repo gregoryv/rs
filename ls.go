@@ -10,7 +10,7 @@ import (
 )
 
 // Ls lists resources
-func Ls(cmd *Cmd) ExecErr {
+func Ls(cmd *Cmd) error {
 	flags := flag.NewFlagSet("ls", flag.ContinueOnError)
 	flags.SetOutput(cmd.Out)
 	longList := flags.Bool("l", false, "use a long listing format")
