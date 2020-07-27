@@ -32,7 +32,7 @@ type Account struct {
 }
 
 // gid returns the first group id of the account
-func (my *Account) gid() int { return my.Groups[0] }
+func (me *Account) gid() int { return me.Groups[0] }
 
 // todo hide as command
 func (me *Account) joinGroup(gid int) {
@@ -74,17 +74,17 @@ func (me *Account) owns(s nugo.Sealed) bool {
 
 // permitted returns error if account does not have operation
 // permission to the given seal.
-func (my *Account) permitted(op operation, s nugo.Sealed) error {
-	if my.UID == Root.UID {
+func (me *Account) permitted(op operation, s nugo.Sealed) error {
+	if me.UID == Root.UID {
 		return nil
 	}
 	n, u, g, o := op.Modes()
 	seal := s.Seal()
 	switch {
-	case my.UID == 0 && (seal.Mode&n == n): // anonymous
-	case my.UID == seal.UID && (seal.Mode&u == u): // owner
-	case my.member(seal.GID) && (seal.Mode&g == g): // group
-	case my.UID > 0 && seal.Mode&o == o: // other
+	case me.UID == 0 && (seal.Mode&n == n): // anonymous
+	case me.UID == seal.UID && (seal.Mode&u == u): // owner
+	case me.member(seal.GID) && (seal.Mode&g == g): // group
+	case me.UID > 0 && seal.Mode&o == o: // other
 	default:
 		return fmt.Errorf("%v %v denied", seal, op)
 	}
@@ -93,8 +93,8 @@ func (my *Account) permitted(op operation, s nugo.Sealed) error {
 
 var ErrPermissionDenied = errors.New("permission denied")
 
-func (my *Account) member(gid int) bool {
-	for _, id := range my.Groups {
+func (me *Account) member(gid int) bool {
+	for _, id := range me.Groups {
 		if id == gid {
 			return true
 		}
