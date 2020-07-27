@@ -204,20 +204,20 @@ func (me *Syscall) Fexec(w io.Writer, cli string) error {
 	parts := strings.Split(cli, " ")
 	cmd := NewCmd(parts[0], parts[1:]...)
 	cmd.Out = w
-	return me.ExecCmd(cmd)
+	return me.Run(cmd)
 }
 
 // Exec splits the cli on whitespace and executes the first as
 // absolute path and the rest as arguments
 func (me *Syscall) Exec(cli string) error {
 	parts := strings.Split(cli, " ")
-	return me.ExecCmd(NewCmd(parts[0], parts[1:]...))
+	return me.Run(NewCmd(parts[0], parts[1:]...))
 }
 
-// ExecCmd executes the given command. Fails if e.g. resource is not
+// Run executes the given command. Fails if e.g. resource is not
 // Executable. All exec calls are audited if system has an auditer
 // configured.
-func (me *Syscall) ExecCmd(cmd *Cmd) error {
+func (me *Syscall) Run(cmd *Cmd) error {
 	n, err := me.stat(cmd.Abspath)
 	if err != nil {
 		return err
