@@ -4,7 +4,7 @@ import "os"
 
 func ExampleMkdir_help() {
 	asRoot := Root.Use(NewSystem())
-	asRoot.Fexec(os.Stdout, "/bin/mkdir", "-h")
+	asRoot.Fexec(os.Stdout, "/bin/mkdir -h")
 	// output:
 	// Usage of mkdir:
 	//   -m uint

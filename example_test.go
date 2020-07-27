@@ -3,7 +3,7 @@ package rs
 import "os"
 
 func Example_defaultResourceSystem() {
-	Root.Use(NewSystem()).Fexec(os.Stdout, "/bin/ls", "-R", "-l", "/")
+	Root.Use(NewSystem()).Fexec(os.Stdout, "/bin/ls -R -l /")
 	// output:
 	// d--xrwxr-xr-x 1 1 /bin
 	// ----rwxr-xr-x 1 1 /bin/chmod

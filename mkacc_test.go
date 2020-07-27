@@ -25,7 +25,7 @@ func TestMkacc(t *testing.T) {
 
 func ExampleMkacc_help() {
 	asRoot := Root.Use(NewSystem())
-	asRoot.Fexec(os.Stdout, "/bin/mkacc", "-h")
+	asRoot.Fexec(os.Stdout, "/bin/mkacc -h")
 	// output:
 	// Usage of mkacc:
 	//   -gid int

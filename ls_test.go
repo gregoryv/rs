@@ -20,7 +20,7 @@ func TestLs(t *testing.T) {
 	bad(asRoot.Exec("/bin/ls /nosuch"))
 	// ls directory is covered by Examples
 	// ls file
-	asRoot.Fexec(&buf, "/bin/ls", "-l", "/etc/accounts/root")
+	asRoot.Fexec(&buf, "/bin/ls -l /etc/accounts/root")
 	exp := "----rw-r--r-- 1 1 root\n"
 	assert := asserter.New(t)
 	assert().Equals(buf.String(), exp)
@@ -29,14 +29,14 @@ func TestLs(t *testing.T) {
 	buf.Reset()
 	n, _ := asRoot.stat("/etc")
 	n.SetPerm(0)
-	ok(asJohn.Fexec(&buf, "/bin/ls", "-R", "/"))
+	ok(asJohn.Fexec(&buf, "/bin/ls -R /"))
 	if strings.Contains(buf.String(), "/etc/accounts") {
 		t.Error("listed /etc")
 	}
 
 	// only list accessible in long format
 	buf.Reset()
-	ok(asJohn.Fexec(&buf, "/bin/ls", "-R", "-l", "/"))
+	ok(asJohn.Fexec(&buf, "/bin/ls -R -l /"))
 	if strings.Contains(buf.String(), "/etc/accounts") {
 		t.Error("listed /etc")
 	}
@@ -46,7 +46,7 @@ func TestLs_Json_long(t *testing.T) {
 	sys := NewSystem()
 	asRoot := Root.Use(sys)
 	var buf bytes.Buffer
-	asRoot.Fexec(&buf, "/bin/ls", "-l", "-json", "/")
+	asRoot.Fexec(&buf, "/bin/ls -l -json /")
 	golden.Assert(t, buf.String())
 }
 
@@ -54,18 +54,18 @@ func TestLs_Json_named(t *testing.T) {
 	sys := NewSystem()
 	asRoot := Root.Use(sys)
 	var buf bytes.Buffer
-	asRoot.Fexec(&buf, "/bin/ls", "-json", "-json-name", "resources", "/")
+	asRoot.Fexec(&buf, "/bin/ls -json -json-name resources /")
 	golden.Assert(t, buf.String())
 }
 
 func ExampleLs_Json() {
-	Anonymous.Use(NewSystem()).Fexec(os.Stdout, "/bin/ls", "-json", "/")
+	Anonymous.Use(NewSystem()).Fexec(os.Stdout, "/bin/ls -json /")
 	// output:
 	// [{"name": "bin"},{"name": "etc"},{"name": "tmp"}]
 }
 
 func ExampleLs() {
-	Anonymous.Use(NewSystem()).Fexec(os.Stdout, "/bin/ls", "/")
+	Anonymous.Use(NewSystem()).Fexec(os.Stdout, "/bin/ls /")
 	// output:
 	// bin
 	// etc
@@ -73,7 +73,7 @@ func ExampleLs() {
 }
 
 func ExampleLs_longListFormat() {
-	Anonymous.Use(NewSystem()).Fexec(os.Stdout, "/bin/ls", "-l", "/")
+	Anonymous.Use(NewSystem()).Fexec(os.Stdout, "/bin/ls -l /")
 	// output:
 	// d--xrwxr-xr-x 1 1 bin
 	// d---rwxr-xr-x 1 1 etc
@@ -82,7 +82,7 @@ func ExampleLs_longListFormat() {
 
 func ExampleLs_help() {
 	asRoot := Root.Use(NewSystem())
-	asRoot.Fexec(os.Stdout, "/bin/ls", "-h")
+	asRoot.Fexec(os.Stdout, "/bin/ls -h")
 	// output:
 	// Usage of ls:
 	//   -R	recursive

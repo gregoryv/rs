@@ -200,8 +200,9 @@ func (me *Syscall) Install(abspath string, cmd Executable, mode nugo.NodeMode,
 
 // Fexec creates and executes a new command and directs the output to
 // the given writer.
-func (me *Syscall) Fexec(w io.Writer, abspath string, args ...string) error {
-	cmd := NewCmd(abspath, args...)
+func (me *Syscall) Fexec(w io.Writer, cli string) error {
+	parts := strings.Split(cli, " ")
+	cmd := NewCmd(parts[0], parts[1:]...)
 	cmd.Out = w
 	return me.ExecCmd(cmd)
 }

@@ -36,7 +36,7 @@ func TestChown_asJohn(t *testing.T) {
 
 func ExampleChown_help() {
 	asRoot := Root.Use(NewSystem())
-	asRoot.Fexec(os.Stdout, "/bin/chown", "-h")
+	asRoot.Fexec(os.Stdout, "/bin/chown -h")
 	// output:
 	// Usage: chown OWNER ...paths
 }
