@@ -184,7 +184,7 @@ func ExampleSyscall_Stat() {
 	_, err := sys.Stat("/etc/accounts/root")
 	fmt.Println(err)
 	// output:
-	// Stat /etc/accounts/root uid:0: d---rwxr-xr-x 1 1 exec denied
+	// Stat /etc/accounts/root uid:0: d---rwxr-xr-x 1 1 accounts exec denied
 }
 
 func TestSystem_Stat_asRoot(t *testing.T) {

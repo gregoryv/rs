@@ -87,10 +87,9 @@ func (me *jsonFormat) Visit(c *ResInfo, abspath string, w *nugo.Walker) {
 	fmt.Fprint(me.out, "{")
 	fmt.Fprintf(me.out, "%q: %q", "name", c.Name())
 	if me.long {
-		seal := c.node.Seal()
-		fmt.Fprintf(me.out, ", %q: %q", "mode", seal.Mode)
-		fmt.Fprintf(me.out, `, %q: "%v"`, "uid", seal.UID)
-		fmt.Fprintf(me.out, `, %q: "%v"`, "gid", seal.GID)
+		fmt.Fprintf(me.out, ", %q: %q", "mode", c.node.Mode)
+		fmt.Fprintf(me.out, `, %q: "%v"`, "uid", c.node.UID)
+		fmt.Fprintf(me.out, `, %q: "%v"`, "gid", c.node.GID)
 	}
 	fmt.Fprint(me.out, "}")
 	me.separator = ","
@@ -107,7 +106,7 @@ func (me *textFormat) Visit(c *ResInfo, abspath string, w *nugo.Walker) {
 	case me.recursive && !me.long:
 		fmt.Fprintf(me.out, "%s\n", abspath)
 	case me.recursive && me.long:
-		fmt.Fprintf(me.out, "%s %s\n", c.node.Seal(), abspath)
+		fmt.Fprintf(me.out, "%s %s\n", c.node.Seal, abspath)
 	case !me.recursive && !me.long:
 		fmt.Fprintf(me.out, "%s\n", c.Name())
 	case !me.recursive && me.long:

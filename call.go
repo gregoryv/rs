@@ -27,7 +27,7 @@ func (me *Syscall) SetGroup(abspath string, gid int) error {
 	if !me.acc.owns(n) && me.acc != Root {
 		return fmt.Errorf("SetGroup: %v not owner of %s", me.acc.UID, abspath)
 	}
-	n.SetGID(gid)
+	n.GID = gid
 	return nil
 }
 
@@ -40,7 +40,7 @@ func (me *Syscall) SetOwner(abspath string, uid int) error {
 	if !me.acc.owns(n) && me.acc != Root {
 		return fmt.Errorf("SetOwner: %v not owner of %s", me.acc.UID, abspath)
 	}
-	n.SetUID(uid)
+	n.UID = uid
 	return nil
 }
 
@@ -83,13 +83,12 @@ func (me *Syscall) Open(abspath string) (*Resource, error) {
 	}
 	r := newResource(n, OpRead)
 	r.unlock = n.RUnlock
-	src := n.Source()
-	switch src := src.(type) {
+	switch content := n.Content.(type) {
 	case []byte:
-		r.buf = bytes.NewBuffer(src)
+		r.buf = bytes.NewBuffer(content)
 	default:
 		// todo figure out how to read Any source
-		return nil, fmt.Errorf("Open: %s(%T) non readable source", abspath, src)
+		return nil, fmt.Errorf("Open: %s(%T) non readable source", abspath, content)
 	}
 	// Resource must be closed to unlock
 	n.RLock()
@@ -193,7 +192,7 @@ func (me *Syscall) Install(abspath string, cmd Executable, mode nugo.NodeMode,
 	}
 	n := parent.node.Make(Name)
 	n.SetPerm(mode)
-	n.SetSource(cmd)
+	n.Content = cmd
 	n.UnsetMode(nugo.ModeDir)
 	return &ResInfo{node: n}, nil
 }
@@ -222,11 +221,11 @@ func (me *Syscall) Run(cmd *Cmd) error {
 	if err != nil {
 		return err
 	}
-	switch src := n.Source().(type) {
+	switch content := n.Content.(type) {
 	case Executable:
 		// If needed setuid can be checked and enforced here
 		cmd.Sys = me
-		err = src.Exec(cmd)
+		err = content.Exec(cmd)
 		if me.auditer != nil {
 			msg := fmt.Sprintf("%v %s", me.acc.UID, cmd.String())
 			if err != nil {
@@ -238,7 +237,7 @@ func (me *Syscall) Run(cmd *Cmd) error {
 		}
 		return err
 	default:
-		return fmt.Errorf("Cannot run %T", src)
+		return fmt.Errorf("Cannot run %T", content)
 	}
 }
 

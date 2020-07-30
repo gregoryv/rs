@@ -68,25 +68,24 @@ func (me *Account) Use(sys *System) *Syscall {
 }
 
 // owns returns true if the account uid mathes the given id
-func (me *Account) owns(s nugo.Sealed) bool {
-	return me.UID == s.Seal().UID
+func (me *Account) owns(n *nugo.Node) bool {
+	return me.UID == n.UID
 }
 
 // permitted returns error if account does not have operation
 // permission to the given seal.
-func (me *Account) permitted(op operation, s nugo.Sealed) error {
+func (me *Account) permitted(op operation, s *nugo.Node) error {
 	if me.UID == Root.UID {
 		return nil
 	}
 	n, u, g, o := op.Modes()
-	seal := s.Seal()
 	switch {
-	case me.UID == 0 && (seal.Mode&n == n): // anonymous
-	case me.UID == seal.UID && (seal.Mode&u == u): // owner
-	case me.member(seal.GID) && (seal.Mode&g == g): // group
-	case me.UID > 0 && seal.Mode&o == o: // other
+	case me.UID == 0 && (s.Mode&n == n): // anonymous
+	case me.UID == s.UID && (s.Mode&u == u): // owner
+	case me.member(s.GID) && (s.Mode&g == g): // group
+	case me.UID > 0 && s.Mode&o == o: // other
 	default:
-		return fmt.Errorf("%v %v denied", seal, op)
+		return fmt.Errorf("%v %v denied", s, op)
 	}
 	return nil
 }

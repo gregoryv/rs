@@ -9,6 +9,8 @@ github.com/gregoryv/find v0.0.0-20180328085109-1bbc2d70c482/go.mod h1:/xxQlO62bz
 github.com/gregoryv/fox v0.2.0/go.mod h1:TIjp1KNSs4u5psYeHElpkZTAuj2SKuELviyJokIqjSs=
 github.com/gregoryv/fox v0.3.1 h1:55Xk+pcVvOVCyvWDg5CNYZ1iNNVwXjeOjhB+8UEPFUA=
 github.com/gregoryv/fox v0.3.1/go.mod h1:YHFvaSSaw6+XapVnfD27LIPcOMixy5PhLHC1h3SB24w=
+github.com/gregoryv/fox v0.3.2 h1:CDzq9LGGiKWwB4My3u5d+q8D5g5R5z5lUhJcd0L3aWQ=
+github.com/gregoryv/fox v0.3.2/go.mod h1:YHFvaSSaw6+XapVnfD27LIPcOMixy5PhLHC1h3SB24w=
 github.com/gregoryv/gocyclo v0.0.0-20180305144948-0be7902fabdc/go.mod h1:x/QA8cT1gfn/XriQ/CVNX7I8IM4Z2YJAAEWFym2clZI=
 github.com/gregoryv/golden v0.3.1 h1:OdVsKRhiTWQj/euKcBU09KHK1iYfLljijh+lE01GETc=
 github.com/gregoryv/golden v0.3.1/go.mod h1:gwYSBOmvGF+fefo7P1PyBpAqqvYx6S85dmkUaI6QMU4=
@@ -20,5 +22,11 @@ github.com/gregoryv/nugo v0.2.1-0.20200717062129-fe1e491efc3b h1:WEUGidNhdYG/mwn
 github.com/gregoryv/nugo v0.2.1-0.20200717062129-fe1e491efc3b/go.mod h1:va1vYkJFTGovPSmSVrJmoKQke7ipS2iXAbA8Fnt/jOU=
 github.com/gregoryv/nugo v0.3.0 h1:duA4CHGLHaJXOU0d+iDlz2eKbUQeN1Z+x9K9SPMlCR8=
 github.com/gregoryv/nugo v0.3.0/go.mod h1:va1vYkJFTGovPSmSVrJmoKQke7ipS2iXAbA8Fnt/jOU=
+github.com/gregoryv/nugo v0.3.2 h1:Jaa9ylHyBJQqsayC5XY0bYkI40PNiJEfkD5hdQOdFzs=
+github.com/gregoryv/nugo v0.3.2/go.mod h1:va1vYkJFTGovPSmSVrJmoKQke7ipS2iXAbA8Fnt/jOU=
+github.com/gregoryv/nugo v0.3.4 h1:9d+anyQ2SKutkcP6F/DFMjs0Hh2iVOIBE9yKE2Tsm3c=
+github.com/gregoryv/nugo v0.3.4/go.mod h1:va1vYkJFTGovPSmSVrJmoKQke7ipS2iXAbA8Fnt/jOU=
+github.com/gregoryv/nugo v0.3.5 h1:EEYpw/35GuApA8Ru9cdNQzo6g0xRnIiV7/aYm5BFs1g=
+github.com/gregoryv/nugo v0.3.5/go.mod h1:va1vYkJFTGovPSmSVrJmoKQke7ipS2iXAbA8Fnt/jOU=
 github.com/gregoryv/qual v0.2.1/go.mod h1:5M5kejbZgxtswBGeoXC1yh4CP94W3FFv5o60BflBlnY=
 github.com/gregoryv/qual v0.4.0/go.mod h1:dB0ZUMaE5qieQ975kKI7A4CDfg6wgcsPcSlY1SWuq9Y=

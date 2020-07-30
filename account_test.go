@@ -28,7 +28,7 @@ func TestAccount_leaveGroup(t *testing.T) {
 func TestAccount_owns(t *testing.T) {
 	acc := NewAccount("root", 1)
 	n := nugo.NewNode("x")
-	n.SetUID(2)
+	n.UID = 2
 	if acc.owns(n) {
 		t.Error("uid 1 owns uid 2")
 	}
@@ -69,8 +69,8 @@ func TestAccount_permittedOther(t *testing.T) {
 // sealed returns a sealed node
 func sealed(uid, gid int, perm nugo.NodeMode) *nugo.Node {
 	n := nugo.NewNode("x")
-	n.SetUID(uid)
-	n.SetGID(gid)
+	n.UID = uid
+	n.GID = gid
 	n.SetPerm(perm)
 	return n
 }

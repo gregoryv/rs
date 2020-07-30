@@ -64,7 +64,7 @@ func (me *Resource) Write(p []byte) (int, error) {
 // buffer is flushed.
 func (me *Resource) Close() error {
 	if me.writeOnly() {
-		me.node.SetSource(me.buf.Bytes())
+		me.node.Content = me.buf.Bytes()
 	}
 	me.buf = nil
 	me.unlock()
