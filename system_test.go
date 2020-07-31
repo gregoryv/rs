@@ -8,8 +8,31 @@ import (
 
 	"github.com/gregoryv/asserter"
 	"github.com/gregoryv/fox"
+	"github.com/gregoryv/golden"
 	"github.com/gregoryv/nugo"
 )
+
+func TestSystem_Export(t *testing.T) {
+	sys := NewSystem()
+	var buf bytes.Buffer
+	ok, _ := asserter.NewErrors(t)
+	ok(sys.Export(&buf))
+	golden.Assert(t, buf.String())
+}
+
+func TestImport(t *testing.T) {
+	var firstExport bytes.Buffer
+	NewSystem().Export(&firstExport)
+	// using copy of buffer content for later comparison
+	importedSys, err := Import(strings.NewReader(firstExport.String()))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var secondExport bytes.Buffer
+	importedSys.Export(&secondExport)
+	assert := asserter.New(t)
+	assert().Equals(firstExport.String(), secondExport.String())
+}
 
 func TestSystem_groupByGID(t *testing.T) {
 	sys := NewSystem()
@@ -48,10 +71,10 @@ func TestSystem_rootNode(t *testing.T) {
 	sys := NewSystem()
 	sys.mount(nugo.NewRoot("/mnt"))
 	sys.mount(nugo.NewRoot("/mnt/usb"))
-	if rn := sys.rootNode("/mnt/usb/some/path"); rn.Name() != "/mnt/usb" {
+	if rn := sys.rootNode("/mnt/usb/some/path"); rn.Name != "/mnt/usb" {
 		t.Fail()
 	}
-	if rn := sys.rootNode("/nosuch/dir"); rn.Name() != "/" {
+	if rn := sys.rootNode("/nosuch/dir"); rn.Name != "/" {
 		t.Fail()
 	}
 }

@@ -12,11 +12,17 @@ Anonymous account has uid,gid 0,0 whereas the Root account 1,1.
 package rs
 
 import (
+	"bufio"
+	"encoding/base64"
+	"encoding/gob"
 	"fmt"
+	"io"
 	"path"
+	"strconv"
 	"strings"
 
 	"github.com/gregoryv/fox"
+	"github.com/gregoryv/nexus"
 	"github.com/gregoryv/nugo"
 )
 
@@ -25,7 +31,7 @@ import (
 func NewSystem() *System {
 	sys := &System{
 		mounts:   make(map[string]*nugo.Node),
-		accounts: []*Account{},
+		Accounts: []*Account{},
 		Groups:   []*Group{},
 	}
 	asRoot := Root.Use(sys)
@@ -56,7 +62,7 @@ func installSys(sys *System) {
 
 type System struct {
 	mounts   map[string]*nugo.Node
-	accounts []*Account
+	Accounts []*Account
 	Groups   []*Group
 
 	auditer fox.Logger // Used audit Syscall.Exec calls
@@ -65,7 +71,7 @@ type System struct {
 // NextUID returns next available uid
 func (me *System) NextUID() int {
 	var uid int
-	for _, acc := range me.accounts {
+	for _, acc := range me.Accounts {
 		if acc.UID > uid {
 			uid = acc.UID
 		}
@@ -75,7 +81,7 @@ func (me *System) NextUID() int {
 
 // accountByUID
 func (me *System) accountByUID(uid int) (*Account, error) {
-	for _, acc := range me.accounts {
+	for _, acc := range me.Accounts {
 		if acc.UID == uid {
 			return acc, nil
 		}
@@ -86,7 +92,7 @@ func (me *System) accountByUID(uid int) (*Account, error) {
 // NextGID returns next available gid
 func (me *System) NextGID() int {
 	var gid int
-	for _, acc := range me.accounts {
+	for _, acc := range me.Accounts {
 		for _, id := range acc.Groups {
 			if id > gid {
 				gid = id
@@ -113,7 +119,7 @@ func (me *System) SetAuditer(auditer fox.Logger) *System {
 }
 
 func (me *System) mount(rn *nugo.Node) error {
-	abspath := path.Clean(rn.Name())
+	abspath := path.Clean(rn.Name)
 	if _, found := me.mounts[abspath]; found {
 		return fmt.Errorf("mount: %s already exists", abspath)
 	}
@@ -127,10 +133,100 @@ func (me *System) rootNode(abspath string) *nugo.Node {
 	rn := me.mounts["/"]
 	for p, n := range me.mounts {
 		if strings.Index(abspath, p) == 0 {
-			if len(n.Name()) > len(rn.Name()) {
+			if len(n.Name) > len(rn.Name) {
 				rn = n
 			}
 		}
 	}
 	return rn
+}
+
+// Export
+func (me *System) Export(w io.Writer) error {
+	root := me.rootNode("/")
+	exp := NodeExporter(w)
+	exp(root, "/", nil)
+	root.Walk(NodeExporter(w))
+	return nil
+}
+
+// NodeExporter writes each node with it's src as gob encoded base64 string
+func NodeExporter(writer io.Writer) nugo.Visitor {
+	p, _ := nexus.NewPrinter(writer)
+	return func(node *nugo.Node, abspath string, w *nugo.Walker) {
+		p.Print(uint32(node.Mode), node.UID, node.GID, " ", abspath)
+		if !node.IsDir() {
+			p.Print(" ")
+			b64 := base64.NewEncoder(base64.StdEncoding, p)
+			switch content := node.Content.(type) {
+			case []byte:
+				b64.Write(content)
+			default:
+				// all executables must be structs for this to work
+				if content != nil {
+					gob.NewEncoder(b64).Encode(content)
+				}
+			}
+		}
+		p.Println()
+	}
+}
+
+func Import(r io.Reader) (*System, error) {
+	scanner := bufio.NewScanner(r)
+	var rn *nugo.Node
+	for scanner.Scan() {
+		n := nugo.NewNode("undef")
+		var (
+			src     string
+			abspath string
+			modeStr string
+		)
+
+		_, err := fmt.Sscanf(scanner.Text(), "%s %d %d %s %s",
+			&modeStr,
+			&n.UID,
+			&n.GID,
+			&abspath,
+			&src,
+		)
+		if err != nil && err != io.EOF {
+			return nil, err
+		}
+		mode, err := strconv.ParseUint(modeStr, 10, 32)
+		if err != nil {
+			return nil, err
+		}
+		n.Mode = nugo.NodeMode(mode)
+		if rn == nil {
+			n.Name = abspath
+			rn = n
+			continue
+		}
+		n.Name = path.Base(abspath)
+
+		if src != "EOF" {
+			b64 := base64.NewDecoder(base64.StdEncoding, strings.NewReader(src))
+			content := make([]byte, 1000)
+			gob.NewDecoder(b64).Decode(&content)
+			n.Content = content
+			fmt.Println(string(content))
+		}
+		parent, err := rn.Find(path.Dir(abspath))
+		if err != nil {
+			return nil, err
+		}
+		parent.Add(n)
+	}
+	sys := NewSystem()
+	sys.mount(rn)
+	return sys, nil
+}
+
+func isSibling(lastpath, abspath string) bool {
+	return lastpath == path.Dir(abspath)
+}
+
+func isChild(lastpath, abspath string) bool {
+	return lastpath == path.Dir(path.Dir(abspath))
 }

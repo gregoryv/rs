@@ -14,12 +14,12 @@ type ResInfo struct {
 }
 
 // Name returns the name of the file
-func (me *ResInfo) Name() string { return me.node.Name() }
+func (me *ResInfo) Name() string { return me.node.Name }
 
 // IsDir returns nil if the resource is a directory
 func (me *ResInfo) IsDir() error {
 	if !me.node.IsDir() {
-		return fmt.Errorf("IsDir: %s not a directory", me.node.Name())
+		return fmt.Errorf("IsDir: %s not a directory", me.node.Name)
 	}
 	return nil
 }
@@ -44,7 +44,7 @@ type Resource struct {
 // resource is in write mode.
 func (me *Resource) Read(b []byte) (int, error) {
 	if me.writeOnly() {
-		return 0, fmt.Errorf("Read: %s write only", me.node.Name())
+		return 0, fmt.Errorf("Read: %s write only", me.node.Name)
 	}
 	if me.buf == nil {
 		return 0, fmt.Errorf("Read: unreadable source")
@@ -55,7 +55,7 @@ func (me *Resource) Read(b []byte) (int, error) {
 // Write writes to the resource. Is not flushed until closed.
 func (me *Resource) Write(p []byte) (int, error) {
 	if me.readOnly() {
-		return 0, fmt.Errorf("Write: %s read only", me.node.Name())
+		return 0, fmt.Errorf("Write: %s read only", me.node.Name)
 	}
 	return me.buf.Write(p)
 }

@@ -67,7 +67,7 @@ func (me *Syscall) RemoveAll(abspath string) error {
 	if err != nil {
 		return wrap("RemoveAll", err)
 	}
-	n.Parent().DelChild(n.Name())
+	n.Parent.DelChild(n.Name)
 	return nil
 }
 
@@ -246,7 +246,7 @@ type Mode nugo.NodeMode
 // AddAccount adds a new account to the system. Name and uid must be
 // unique.
 func (me *Syscall) AddAccount(acc *Account) error {
-	for _, existing := range me.sys.accounts {
+	for _, existing := range me.sys.Accounts {
 		if existing.UID == acc.UID {
 			return fmt.Errorf("uid exists")
 		}
@@ -259,7 +259,7 @@ func (me *Syscall) AddAccount(acc *Account) error {
 	if err := me.Save(abspath, acc); err != nil {
 		return err
 	}
-	me.sys.accounts = append(me.sys.accounts, acc)
+	me.sys.Accounts = append(me.sys.Accounts, acc)
 	return nil
 }
 
@@ -313,13 +313,13 @@ func (me *Syscall) stat(abspath string) (*nugo.Node, error) {
 	if err != nil {
 		return nil, err
 	}
-	parent := n.Parent()
+	parent := n.Parent
 	// check each parent for access
 	for parent != nil {
 		if err := me.acc.permitted(OpExec, parent); err != nil {
 			return nil, fmt.Errorf("%s uid:%d: %v", abspath, me.acc.UID, err)
 		}
-		parent = parent.Parent()
+		parent = parent.Parent
 	}
 	return n, nil
 }

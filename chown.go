@@ -12,7 +12,7 @@ import (
 type Chown struct{}
 
 func (me *Chown) Exec(cmd *Cmd) error {
-	flags := flag.NewFlagSet("chown", flag.ContinueOnError)
+	flags := flag.NewFlagSet("Chown", flag.ContinueOnError)
 	flags.Usage = func() { me.WriteUsage(cmd.Out) }
 	flags.SetOutput(cmd.Out)
 	if err := flags.Parse(cmd.Args); err != nil {
@@ -39,7 +39,7 @@ func (me *Chown) Exec(cmd *Cmd) error {
 
 func (me *Chown) WriteUsage(w io.Writer) {
 	p, _ := nexus.NewPrinter(w)
-	p.Println("Usage: chown OWNER ...paths")
+	p.Println("Usage: Chown OWNER ...paths")
 }
 
 // parseOwner parses OWNER[:GROUP]
