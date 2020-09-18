@@ -20,6 +20,8 @@ import (
 	"path"
 	"strconv"
 	"strings"
+	"sync"
+	"time"
 
 	"github.com/gregoryv/fox"
 	"github.com/gregoryv/nexus"
@@ -66,6 +68,23 @@ type System struct {
 	Groups   []*Group
 
 	auditer fox.Logger // Used audit Syscall.Exec calls
+
+	lm           sync.RWMutex
+	lastModified time.Time // last time a resource was modified
+}
+
+// touch synced update of lastModified field
+func (me *System) touch() {
+	me.lm.Lock()
+	me.lastModified = time.Now()
+	me.lm.Unlock()
+}
+
+// LastModified returns last time resources state was modified.
+func (me *System) LastModified() time.Time {
+	me.lm.RLock()
+	defer me.lm.RUnlock()
+	return me.lastModified
 }
 
 // NextUID returns next available uid
@@ -124,6 +143,7 @@ func (me *System) mount(rn *nugo.Node) error {
 		return fmt.Errorf("mount: %s already exists", abspath)
 	}
 	me.mounts[abspath] = rn
+	me.touch()
 	return nil
 }
 
@@ -220,6 +240,7 @@ func Import(r io.Reader) (*System, error) {
 	}
 	sys := NewSystem()
 	sys.mount(rn)
+	sys.touch()
 	return sys, nil
 }
 

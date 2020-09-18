@@ -5,12 +5,24 @@ import (
 	"fmt"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/gregoryv/asserter"
 	"github.com/gregoryv/fox"
 	"github.com/gregoryv/golden"
 	"github.com/gregoryv/nugo"
 )
+
+func TestSystem_LastModified(t *testing.T) {
+	sys := NewSystem()
+	before := sys.LastModified()
+	var x time.Time
+	assert := asserter.New(t)
+	assert(x != before).Error(before)
+	sys.touch()
+	after := sys.LastModified()
+	assert(before != after).Error(before, after)
+}
 
 func TestSystem_Export(t *testing.T) {
 	sys := NewSystem()

@@ -28,6 +28,7 @@ func (me *Syscall) SetGroup(abspath string, gid int) error {
 		return fmt.Errorf("SetGroup: %v not owner of %s", me.acc.UID, abspath)
 	}
 	n.GID = gid
+	me.sys.touch()
 	return nil
 }
 
@@ -41,6 +42,7 @@ func (me *Syscall) SetOwner(abspath string, uid int) error {
 		return fmt.Errorf("SetOwner: %v not owner of %s", me.acc.UID, abspath)
 	}
 	n.UID = uid
+	me.sys.touch()
 	return nil
 }
 
@@ -58,6 +60,7 @@ func (me *Syscall) SetMode(abspath string, mode Mode) error {
 		return fmt.Errorf("SetMode: invalid mode")
 	}
 	n.SetPerm(nugo.NodeMode(mode)) // todo add SetMode
+	me.sys.touch()
 	return nil
 }
 
@@ -68,6 +71,7 @@ func (me *Syscall) RemoveAll(abspath string) error {
 		return wrap("RemoveAll", err)
 	}
 	n.Parent.DelChild(n.Name)
+	me.sys.touch()
 	return nil
 }
 
@@ -117,6 +121,7 @@ func (me *Syscall) Create(abspath string) (*Resource, error) {
 	r := newResource(n, OpWrite)
 	r.buf = &bytes.Buffer{}
 	r.unlock = n.Unlock
+	me.sys.touch()
 	return r, nil
 }
 
@@ -133,7 +138,7 @@ func (me *Syscall) SaveAs(abspath string, src interface{}) error {
 	return wrap("SaveAs", gob.NewEncoder(w).Encode(src))
 }
 
-// Save save src to the given abspath. Overwrites existing resource.
+// Save saves src to the given abspath. Overwrites existing resource.
 // If src implements io.WriterTo interface that is used otherwise it's gob encoded.
 func (me *Syscall) Save(abspath string, src interface{}) error {
 	rif, _ := me.Stat(abspath)
@@ -194,6 +199,7 @@ func (me *Syscall) Install(abspath string, cmd Executable, mode nugo.NodeMode,
 	n.SetPerm(mode)
 	n.Content = cmd
 	n.UnsetMode(nugo.ModeDir)
+	me.sys.touch()
 	return &ResInfo{node: n}, nil
 }
 
@@ -260,6 +266,7 @@ func (me *Syscall) AddAccount(acc *Account) error {
 		return err
 	}
 	me.sys.Accounts = append(me.sys.Accounts, acc)
+	me.sys.touch()
 	return nil
 }
 
@@ -292,6 +299,7 @@ func (me *Syscall) Mkdir(abspath string, mode Mode) (*ResInfo, error) {
 	}
 	n := parent.Make(Name)
 	n.SetPerm(nugo.NodeMode(mode))
+	me.sys.touch()
 	return &ResInfo{node: n}, nil
 }
 
