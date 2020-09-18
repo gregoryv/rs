@@ -230,7 +230,6 @@ func Import(r io.Reader) (*System, error) {
 			content := make([]byte, 1000)
 			gob.NewDecoder(b64).Decode(&content)
 			n.Content = content
-			fmt.Println(string(content))
 		}
 		parent, err := rn.Find(path.Dir(abspath))
 		if err != nil {
