@@ -179,6 +179,13 @@ func TestSyscall_Exec_asRoot(t *testing.T) {
 	bad(asRoot.Exec("/bin/mkdir -nosuch")).Log("bad flag")
 }
 
+func TestSyscall_Execf_asRoot(t *testing.T) {
+	asRoot := Root.Use(NewSystem())
+	ok, bad := asserter.NewErrors(t)
+	ok(asRoot.Execf("/bin/mkdir %s", "/tmp"))
+	bad(asRoot.Execf("/bin/nosuch/mkdir %s", "/tmp"))
+}
+
 func ExampleSyscall_Stat() {
 	sys := Anonymous.Use(NewSystem())
 	_, err := sys.Stat("/etc/accounts/root")

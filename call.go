@@ -219,6 +219,11 @@ func (me *Syscall) Exec(cli string) error {
 	return me.Run(NewCmd(parts[0], parts[1:]...))
 }
 
+// Execf formats command line and calls Exec
+func (me *Syscall) Execf(format string, v ...interface{}) error {
+	return me.Exec(fmt.Sprintf(format, v...))
+}
+
 // Run executes the given command. Fails if e.g. resource is not
 // Executable. All exec calls are audited if system has an auditer
 // configured.
