@@ -16,6 +16,7 @@ func TestSecure_createsCredentials_asRoot(t *testing.T) {
 	_, bad := asserter.NewErrors(t)
 	oK, _ := asserter.NewMixed(t)
 	bad(asRoot.Exec("/bin/secure -a eva -s x"))
+	bad(asRoot.Exec("/bin/secure -a john"))
 	oK(asRoot.Stat("/etc/credentials"))
 }
 

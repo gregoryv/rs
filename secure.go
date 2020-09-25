@@ -17,6 +17,9 @@ func Secure(cmd *Cmd) error {
 	if err := flags.Parse(cmd.Args); err != nil {
 		return err
 	}
+	if *secret == "" {
+		return fmt.Errorf("empty secret")
+	}
 	var acc Account
 	if err := cmd.Sys.LoadAccount(&acc, *name); err != nil {
 		return err
