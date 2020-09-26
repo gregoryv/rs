@@ -14,7 +14,6 @@ package rs
 import (
 	"bufio"
 	"encoding/base64"
-	"encoding/gob"
 	"fmt"
 	"io"
 	"path"
@@ -170,37 +169,41 @@ func (me *System) Export(w io.Writer) error {
 	return nil
 }
 
-// NodeExporter writes each node with it's src as gob encoded base64 string
+// NodeExporter writes each node with it's content as base64 encoded string
 func NodeExporter(writer io.Writer) nugo.Visitor {
 	p, _ := nexus.NewPrinter(writer)
 	return func(node *nugo.Node, abspath string, w *nugo.Walker) {
+		if _, isExecutable := node.Content.(Executable); isExecutable {
+			return
+		}
 		p.Print(uint32(node.Mode), node.UID, node.GID, " ", abspath)
+		defer p.Println()
 		if !node.IsDir() {
 			p.Print(" ")
 			b64 := base64.NewEncoder(base64.StdEncoding, p)
 			switch content := node.Content.(type) {
 			case []byte:
 				b64.Write(content)
+			case nil:
+				return
 			default:
-				// all executables must be structs for this to work
-				if content != nil {
-					gob.NewEncoder(b64).Encode(content)
-				}
+				panic(fmt.Sprintf(
+					"cannot export %t, only []byte supported", content,
+				))
 			}
 		}
-		p.Println()
 	}
 }
 
-func Import(r io.Reader) (*System, error) {
+func (me *System) Import(abspath string, r io.Reader) error {
 	scanner := bufio.NewScanner(r)
-	var rn *nugo.Node
+	rn := me.rootNode(abspath)
 	for scanner.Scan() {
 		n := nugo.NewNode("undef")
 		var (
-			src     string
-			abspath string
 			modeStr string
+			abspath string
+			content string
 		)
 
 		_, err := fmt.Sscanf(scanner.Text(), "%s %d %d %s %s",
@@ -208,39 +211,39 @@ func Import(r io.Reader) (*System, error) {
 			&n.UID,
 			&n.GID,
 			&abspath,
-			&src,
+			&content,
 		)
 		if err != nil && err != io.EOF {
-			return nil, err
+			return err
 		}
 		mode, err := strconv.ParseUint(modeStr, 10, 32)
 		if err != nil {
-			return nil, err
+			return err
 		}
 		n.Mode = nugo.NodeMode(mode)
-		if rn == nil {
-			n.Name = abspath
-			rn = n
-			continue
-		}
 		n.Name = path.Base(abspath)
 
-		if src != "EOF" {
-			b64 := base64.NewDecoder(base64.StdEncoding, strings.NewReader(src))
-			content := make([]byte, 1000)
-			gob.NewDecoder(b64).Decode(&content)
-			n.Content = content
+		if content != "EOF" {
+			n.Content, err = base64.StdEncoding.DecodeString(content)
+			if err != nil {
+				return err
+			}
 		}
-		parent, err := rn.Find(path.Dir(abspath))
-		if err != nil {
-			return nil, err
+
+		if existing, err := rn.Find(abspath); err == nil {
+			existing.UID = n.UID
+			existing.GID = n.GID
+			existing.SetPerm(n.Mode)
+			existing.Content = n.Content
+		} else {
+			parent, err := rn.Find(path.Dir(abspath))
+			if err != nil {
+				return err
+			}
+			parent.Add(n)
 		}
-		parent.Add(n)
 	}
-	sys := NewSystem()
-	sys.mount(rn)
-	sys.touch()
-	return sys, nil
+	return nil
 }
 
 func isSibling(lastpath, abspath string) bool {

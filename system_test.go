@@ -31,18 +31,28 @@ func TestSystem_Export(t *testing.T) {
 	golden.Assert(t, buf.String())
 }
 
-func TestImport(t *testing.T) {
-	var firstExport bytes.Buffer
-	NewSystem().Export(&firstExport)
-	// using copy of buffer content for later comparison
-	importedSys, err := Import(strings.NewReader(firstExport.String()))
-	if err != nil {
+func TestSystem_Import(t *testing.T) {
+	sysA := NewSystem()
+	asRoot := Root.Use(sysA)
+	asRoot.Exec("/bin/mkdir /etc/test") // /tmp/test fails
+
+	var export bytes.Buffer
+	sysA.Export(&export)
+
+	sysB := NewSystem()
+	if err := sysB.Import("/", &export); err != nil {
 		t.Fatal(err)
 	}
-	var secondExport bytes.Buffer
-	importedSys.Export(&secondExport)
+
+	var (
+		got = bytes.NewBufferString("\n")
+		exp = bytes.NewBufferString("\n")
+	)
+	asRoot.Fexec(got, "/bin/ls -R -l /")
+	Root.Use(sysB).Fexec(exp, "/bin/ls -R -l /")
+
 	assert := asserter.New(t)
-	assert().Equals(firstExport.String(), secondExport.String())
+	assert().Equals(got.String(), exp.String())
 }
 
 func TestSystem_groupByGID(t *testing.T) {
