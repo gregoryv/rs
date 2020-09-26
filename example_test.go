@@ -1,9 +1,14 @@
 package rs
 
-import "os"
+import (
+	"fmt"
+	"os"
+)
 
 func Example_defaultResourceSystem() {
-	Root.Use(NewSystem()).Fexec(os.Stdout, "/bin/ls -R -l /")
+	sys := NewSystem()
+	asRoot := Root.Use(sys)
+	asRoot.Fexec(os.Stdout, "/bin/ls -R -l /")
 	// output:
 	// d--xrwxr-xr-x 1 1 /bin
 	// ----rwxr-xr-x 1 1 /bin/chmod
@@ -20,4 +25,16 @@ func Example_defaultResourceSystem() {
 	// ----rw-r--r-- 1 1 /etc/groups/anonymous
 	// ----rw-r--r-- 1 1 /etc/groups/root
 	// drwxrwxrwxrwx 1 1 /tmp
+}
+
+func Example_saveAndLoadResource() {
+	sys := NewSystem()
+	asRoot := Root.Use(sys)
+	asRoot.Exec("/bin/mkdir /tmp/aliens")
+	asRoot.Save("/tmp/aliens/green.gob", &Alien{Name: "Mr Green"})
+	var alien Alien
+	asRoot.Load(&alien, "/tmp/aliens/green.gob")
+	fmt.Printf("%#v", alien)
+	// output:
+	// rs.Alien{Name:"Mr Green"}
 }

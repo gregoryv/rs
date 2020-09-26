@@ -2,7 +2,6 @@ package rs
 
 import (
 	"bytes"
-	"fmt"
 	"strings"
 	"testing"
 	"time"
@@ -96,15 +95,4 @@ func TestSystem_mount(t *testing.T) {
 	ok, bad := asserter.NewErrors(t)
 	bad(sys.mount(nugo.NewRoot("/")))
 	ok(sys.mount(nugo.NewRoot("/mnt/usb")))
-}
-
-func Example_saveAndLoadResource() {
-	asRoot := Root.Use(NewSystem())
-	asRoot.Exec("/bin/mkdir /tmp/aliens")
-	asRoot.Save("/tmp/aliens/green.gob", &Alien{Name: "Mr Green"})
-	var alien Alien
-	asRoot.Load(&alien, "/tmp/aliens/green.gob")
-	fmt.Printf("%#v", alien)
-	// output:
-	// rs.Alien{Name:"Mr Green"}
 }
