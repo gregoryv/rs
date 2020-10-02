@@ -26,33 +26,42 @@ func TestSystem_LastModified(t *testing.T) {
 func TestSystem_Export(t *testing.T) {
 	sys := NewSystem()
 	var buf bytes.Buffer
-	ok, _ := asserter.NewErrors(t)
+	ok := asserter.Wrap(t).Ok
 	ok(sys.Export(&buf))
 	golden.Assert(t, buf.String())
 }
 
 func TestSystem_Import(t *testing.T) {
-	sysA := NewSystem()
-	asRoot := Root.Use(sysA)
-	asRoot.Exec("/bin/mkdir /etc/test") // /tmp/test fails
+	var (
+		sysA    = NewSystem()
+		asRootA = Root.Use(sysA)
+		exportA bytes.Buffer
 
-	var export bytes.Buffer
-	sysA.Export(&export)
-
-	sysB := NewSystem()
-	if err := sysB.Import("/", &export); err != nil {
+		sysB    = NewSystem()
+		asRootB = Root.Use(sysB)
+	)
+	// Make it a bit different from default system
+	asRootA.Exec("/bin/mkdir /tmp/test")
+	// Export
+	sysA.Export(&exportA)
+	// Import
+	t.Log(exportA.String())
+	if err := sysB.Import("/", &exportA); err != nil {
 		t.Fatal(err)
 	}
 
 	var (
-		got = bytes.NewBufferString("\n")
-		exp = bytes.NewBufferString("\n")
+		got     = bytes.NewBufferString("\n")
+		exp     = bytes.NewBufferString("\n")
+		exportB bytes.Buffer
 	)
-	asRoot.Fexec(got, "/bin/ls -R -l /")
-	Root.Use(sysB).Fexec(exp, "/bin/ls -R -l /")
+	asRootA.Fexec(got, "/bin/ls -R -l /")
+	asRootB.Fexec(exp, "/bin/ls -R -l /")
 
-	assert := asserter.New(t)
-	assert().Equals(got.String(), exp.String())
+	sysB.Export(&exportB)
+	t.Log(exportB.String())
+	equals := asserter.Wrap(t).Equals
+	equals(got, exp)
 }
 
 func TestSystem_groupByGID(t *testing.T) {

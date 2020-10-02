@@ -48,6 +48,7 @@ func Ls(cmd *Cmd) error {
 	w := NewWalker(cmd.Sys)
 	w.SetRecursive(*recursive)
 	if err := res.IsDir(); err != nil {
+		// Visit just the one resource
 		format.Visit(res, abspath, w.w)
 		return nil
 	}

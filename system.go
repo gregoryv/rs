@@ -17,7 +17,6 @@ import (
 	"fmt"
 	"io"
 	"path"
-	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -195,19 +194,20 @@ func NodeExporter(writer io.Writer) nugo.Visitor {
 	}
 }
 
+// Import imports resources to the system from the given reader to the abspath.
 func (me *System) Import(abspath string, r io.Reader) error {
 	scanner := bufio.NewScanner(r)
 	rn := me.rootNode(abspath)
 	for scanner.Scan() {
 		n := nugo.NewNode("undef")
 		var (
-			modeStr string
+			mode    nugo.NodeMode
 			abspath string
 			content string
 		)
 
-		_, err := fmt.Sscanf(scanner.Text(), "%s %d %d %s %s",
-			&modeStr,
+		_, err := fmt.Sscanf(scanner.Text(), "%d %d %d %s %s",
+			&mode,
 			&n.UID,
 			&n.GID,
 			&abspath,
@@ -216,11 +216,6 @@ func (me *System) Import(abspath string, r io.Reader) error {
 		if err != nil && err != io.EOF {
 			return err
 		}
-		mode, err := strconv.ParseUint(modeStr, 10, 32)
-		if err != nil {
-			return err
-		}
-		n.Mode = nugo.NodeMode(mode)
 		n.Name = path.Base(abspath)
 
 		if content != "EOF" {
@@ -233,14 +228,15 @@ func (me *System) Import(abspath string, r io.Reader) error {
 		if existing, err := rn.Find(abspath); err == nil {
 			existing.UID = n.UID
 			existing.GID = n.GID
-			existing.SetPerm(n.Mode)
+			existing.SetPerm(mode)
 			existing.Content = n.Content
 		} else {
 			parent, err := rn.Find(path.Dir(abspath))
 			if err != nil {
 				return err
 			}
-			parent.Add(n)
+			parent.Add(n) // Inherits permission mode
+			n.SetPerm(mode)
 		}
 	}
 	return nil
