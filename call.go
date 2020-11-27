@@ -212,16 +212,16 @@ func (me *Syscall) Fexec(w io.Writer, cli string) error {
 	return me.Run(cmd)
 }
 
+// Execf formats command line and calls Exec
+func (me *Syscall) Execf(format string, v ...interface{}) error {
+	return me.Exec(fmt.Sprintf(format, v...))
+}
+
 // Exec splits the cli on whitespace and executes the first as
 // absolute path and the rest as arguments
 func (me *Syscall) Exec(cli string) error {
 	parts := strings.Split(cli, " ")
 	return me.Run(NewCmd(parts[0], parts[1:]...))
-}
-
-// Execf formats command line and calls Exec
-func (me *Syscall) Execf(format string, v ...interface{}) error {
-	return me.Exec(fmt.Sprintf(format, v...))
 }
 
 // Run executes the given command. Fails if e.g. resource is not
