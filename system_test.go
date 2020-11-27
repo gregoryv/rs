@@ -34,7 +34,7 @@ func TestSystem_Export(t *testing.T) {
 func TestSystem_Import(t *testing.T) {
 	var (
 		sysA    = NewSystem()
-		asRootA = Root.UseAudited(sysA, t)
+		asRootA = Root.Use(sysA)
 		exportA bytes.Buffer
 
 		sysB    = NewSystem()

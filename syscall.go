@@ -18,6 +18,9 @@ type Syscall struct {
 	auditer fox.Logger // used to audit who executes what
 }
 
+// SetAuditer sets the auditer to use. nil disables audit.
+func (me *Syscall) SetAuditer(v fox.Logger) { me.auditer = v }
+
 // SetGroup
 func (me *Syscall) SetGroup(abspath string, gid int) error {
 	n, err := me.stat(abspath)
