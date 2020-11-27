@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/gregoryv/fox"
 	"github.com/gregoryv/nugo"
 )
 
@@ -55,6 +56,15 @@ func (me *Account) leaveGroup(gid int) {
 			me.mu.Unlock()
 			return
 		}
+	}
+}
+
+// Use returns a Syscall struct for accessing the system.
+func (me *Account) UseAudited(sys *System, auditer fox.Logger) *Syscall {
+	return &Syscall{
+		sys:     sys,
+		acc:     me,
+		auditer: auditer,
 	}
 }
 
