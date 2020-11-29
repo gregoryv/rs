@@ -228,15 +228,15 @@ func (me *System) Import(abspath string, r io.Reader) error {
 		if existing, err := rn.Find(abspath); err == nil {
 			existing.UID = n.UID
 			existing.GID = n.GID
-			existing.SetPerm(mode)
+			existing.Mode = mode
 			existing.Content = n.Content
 		} else {
 			parent, err := rn.Find(path.Dir(abspath))
 			if err != nil {
 				return err
 			}
-			parent.Add(n) // Inherits permission mode
-			n.SetPerm(mode)
+			parent.Add(n)
+			n.Mode = mode
 		}
 	}
 	return nil

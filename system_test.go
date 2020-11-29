@@ -31,35 +31,34 @@ func TestSystem_Export(t *testing.T) {
 	golden.Assert(t, buf.String())
 }
 
-func TestSystem_Import(t *testing.T) {
+func Test_data_persistence(t *testing.T) {
+	t.Log(`System should be the same after export and import`)
 	var (
 		sysA    = NewSystem()
 		asRootA = Root.Use(sysA)
 		exportA bytes.Buffer
-
-		sysB    = NewSystem()
-		asRootB = Root.Use(sysB)
 	)
 	// Make it a bit different from default system
 	asRootA.Exec("/bin/mkdir /tmp/test")
+	asRootA.Exec("/bin/mkacc -uid 2 -gid 2 john")
+	err := asRootA.Exec("/bin/secure -a john -s mysecret")
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	// Export
 	sysA.Export(&exportA)
+	exp := exportA.String() // save for later as it's read when imported
+
 	// Import
-	t.Log(exportA.String())
+	sysB := NewSystem()
 	if err := sysB.Import("/", &exportA); err != nil {
 		t.Fatal(err)
 	}
 
-	var (
-		got     = bytes.NewBufferString("\n")
-		exp     = bytes.NewBufferString("\n")
-		exportB bytes.Buffer
-	)
-	asRootA.Fexec(got, "/bin/ls -R -l /")
-	asRootB.Fexec(exp, "/bin/ls -R -l /")
-
+	var exportB bytes.Buffer
 	sysB.Export(&exportB)
-	t.Log(exportB.String())
+	got := exportB.String()
 	equals := asserter.Wrap(t).Equals
 	equals(got, exp)
 }
