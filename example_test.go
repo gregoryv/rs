@@ -31,9 +31,10 @@ func Example_saveAndLoadResource() {
 	sys := NewSystem()
 	asRoot := Root.Use(sys)
 	asRoot.Exec("/bin/mkdir /tmp/aliens")
-	asRoot.Save("/tmp/aliens/green.gob", &Alien{Name: "Mr Green"})
+	filename := "/tmp/aliens/green.gob"
+	asRoot.Save(filename, &Alien{Name: "Mr Green"})
 	var alien Alien
-	asRoot.Load(&alien, "/tmp/aliens/green.gob")
+	asRoot.Load(&alien, filename)
 	fmt.Printf("%#v", alien)
 	// output:
 	// rs.Alien{Name:"Mr Green"}
