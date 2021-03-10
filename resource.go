@@ -46,10 +46,10 @@ func (me *Resource) Read(b []byte) (int, error) {
 	if me.writeOnly() {
 		return 0, fmt.Errorf("Read: %s write only", me.node.Name)
 	}
-	if me.buf == nil {
+	if me.Reader == nil {
 		return 0, fmt.Errorf("Read: unreadable source")
 	}
-	return me.buf.Read(b)
+	return me.Reader.Read(b)
 }
 
 // Write writes to the resource. Is not flushed until closed.

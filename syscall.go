@@ -149,9 +149,10 @@ func (me *Syscall) Load(res interface{}, abspath string) error {
 	switch res := res.(type) {
 	case io.ReaderFrom:
 		_, err := res.ReadFrom(r)
-		return err
+		return wrap("Load", err)
 	default:
-		return wrap("Load", gob.NewDecoder(r).Decode(res))
+		err := gob.NewDecoder(r).Decode(res)
+		return wrap("Load", err)
 	}
 }
 
@@ -169,7 +170,7 @@ func (me *Syscall) Open(abspath string) (*Resource, error) {
 	r.unlock = n.RUnlock
 	switch content := n.Content.(type) {
 	case []byte:
-		r.buf = bytes.NewBuffer(content)
+		r.Reader = bytes.NewReader(content)
 	default:
 		// todo figure out how to read Any source
 		return nil, fmt.Errorf("Open: %s(%T) non readable source", abspath, content)

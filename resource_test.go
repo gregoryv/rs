@@ -35,7 +35,7 @@ func TestResource_Read(t *testing.T) {
 		ok, bad = asserter.NewMixed(t)
 		b       = make([]byte, 10)
 	)
-	r := &Resource{op: OpRead, buf: bytes.NewBufferString("hello")}
+	r := &Resource{op: OpRead, Reader: bytes.NewBufferString("hello")}
 	ok(r.Read(b))
 	r = &Resource{op: OpRead}
 	bad(r.Read(b))
