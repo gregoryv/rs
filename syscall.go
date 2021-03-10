@@ -78,30 +78,6 @@ func (me *Syscall) RemoveAll(abspath string) error {
 	return nil
 }
 
-// Open resource for reading. Underlying source must be string or []byte.
-// If resource is open for writing this call blocks.
-func (me *Syscall) Open(abspath string) (*Resource, error) {
-	n, err := me.stat(abspath)
-	if err != nil {
-		return nil, fmt.Errorf("Open: %s", err)
-	}
-	if err := me.acc.permitted(OpRead, n); err != nil {
-		return nil, wrap("Open", err)
-	}
-	r := newResource(n, OpRead)
-	r.unlock = n.RUnlock
-	switch content := n.Content.(type) {
-	case []byte:
-		r.buf = bytes.NewBuffer(content)
-	default:
-		// todo figure out how to read Any source
-		return nil, fmt.Errorf("Open: %s(%T) non readable source", abspath, content)
-	}
-	// Resource must be closed to unlock
-	n.RLock()
-	return r, nil
-}
-
 // Create returns a new resource for writing. Fails if existing
 // resource is directory. Caller must close resource.
 func (me *Syscall) Create(abspath string) (*Resource, error) {
@@ -169,6 +145,7 @@ func (me *Syscall) Load(res interface{}, abspath string) error {
 	if err != nil {
 		return fmt.Errorf("Load: %w", err)
 	}
+	defer r.Close()
 	switch res := res.(type) {
 	case io.ReaderFrom:
 		_, err := res.ReadFrom(r)
@@ -176,6 +153,30 @@ func (me *Syscall) Load(res interface{}, abspath string) error {
 	default:
 		return wrap("Load", gob.NewDecoder(r).Decode(res))
 	}
+}
+
+// Open resource for reading. Underlying source must be string or []byte.
+// If resource is open for writing this call blocks.
+func (me *Syscall) Open(abspath string) (*Resource, error) {
+	n, err := me.stat(abspath)
+	if err != nil {
+		return nil, fmt.Errorf("Open: %s", err)
+	}
+	if err := me.acc.permitted(OpRead, n); err != nil {
+		return nil, wrap("Open", err)
+	}
+	r := newResource(n, OpRead)
+	r.unlock = n.RUnlock
+	switch content := n.Content.(type) {
+	case []byte:
+		r.buf = bytes.NewBuffer(content)
+	default:
+		// todo figure out how to read Any source
+		return nil, fmt.Errorf("Open: %s(%T) non readable source", abspath, content)
+	}
+	// Resource must be closed to unlock
+	n.RLock()
+	return r, nil
 }
 
 // LoadAccount
